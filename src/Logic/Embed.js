@@ -19,13 +19,14 @@ module.exports = {
             .setDescription(description)
             .setColor("Red")
     },
-    getCustomColorAnswerEmbed: async function getCustomColorAnswerEmbed(title, description, color) {
+    getCustomColorAnswerEmbed: async function getCustomColorAnswerEmbed(title, description, color, user) {
         return new EmbedBuilder()
             .setTitle(title)
             .setDescription(description)
             .setColor(color)
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
-    getDefaultLoseEmbed: async function getDefaultLoseEmbed(gameTitle, bet, gameDescription, lost, walletValue) {
+    getDefaultLoseEmbed: async function getDefaultLoseEmbed(gameTitle, bet, gameDescription, lost, walletValue, user) {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - You Lost!")
             .setDescription(
@@ -34,8 +35,9 @@ module.exports = {
                 Lost: ${lost}:coin:\n
                 Your Wallet: ${walletValue -= Number(lost)}:coin:`)
             .setColor("Red")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
-    getDefaultWinEmbed: async function getDefaultWinEmbed(gameTitle, bet, gameDescription, profit, walletValue) {
+    getDefaultWinEmbed: async function getDefaultWinEmbed(gameTitle, bet, gameDescription, profit, walletValue, user) {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - You Won!")
             .setDescription(
@@ -44,8 +46,9 @@ module.exports = {
                 Your Profit: ${profit}:coin:\n
                 Your Wallet: ${walletValue += Number(profit)}:coin:`)
             .setColor("Green")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
-    getDefaultDrawEmbed: async function getDefaultDrawEmbed(gameTitle, bet, gameDescription, walletValue) {
+    getDefaultDrawEmbed: async function getDefaultDrawEmbed(gameTitle, bet, gameDescription, walletValue, user) {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - Draw!")
             .setDescription(
@@ -53,11 +56,21 @@ module.exports = {
                 ${gameDescription}\n
                 Your Wallet: ${walletValue}:coin:`)
             .setColor("Yellow")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
     getMinecraftRecipeEmbed: async function getMinecraftRecipeEmbed(recipeName, imgURL) {
         return new EmbedBuilder()
             .setTitle(recipeName)
             .setImage(imgURL)
+            .setColor("LuminousVividPink")
+    },
+    getUserInformationEmbed: async function getUserInformationEmbed(user, profile) {
+        return new EmbedBuilder()
+            .setTitle(`${user.username}`)
+            .setThumbnail(`${user.displayAvatarURL()}`)
+            .setDescription(
+                `**Level**: ${profile.Level}\n
+                **Wallet**: ${profile.Wallet}:coin:`)
             .setColor("LuminousVividPink")
     }
 };

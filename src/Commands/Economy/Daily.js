@@ -15,7 +15,8 @@ module.exports = {
     var dailyRewardEmbed = await getCustomColorAnswerEmbed(
       "Daily Reward",
       `You could not claim youre daily reward`,
-      "Orange"
+      "Orange",
+      interaction.user
     );
     
     const userProfile = await Profile.find({ UserID: userId, GuildID: guildId });
@@ -44,7 +45,8 @@ module.exports = {
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
         `You have collected today's reward ${dailyReward}:coin:.\nCome back tomorrow to collect more.`,
-        "Green"
+        "Green",
+        interaction.user
       );
     } else if (Date.now() - userProfile[0].lastDaily > 86400000) {
       await Profile.updateOne(
@@ -60,7 +62,8 @@ module.exports = {
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
         `You have collected today's reward ${dailyReward}:coin:`,
-        "Green"
+        "Green",
+        interaction.user
       );
     } else {
       const lastDaily = new Date(userProfile[0].lastDaily);
@@ -78,7 +81,8 @@ module.exports = {
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
         `You have to wait ${timeLeftInHours}h ${timeLeftInMinutes}m ${timeLeftInSeconds}s before you can collect your daily reward.`,
-        "Orange"
+        "Orange",
+        interaction.user
       );
     }
 

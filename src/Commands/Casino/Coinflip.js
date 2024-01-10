@@ -60,7 +60,8 @@ module.exports = {
         var coinflipEmbed = await getCustomColorAnswerEmbed(
             "Coin Flip",
             `You could not flip a coin`,
-            "Orange"
+            "Orange",
+            interaction.user
         );
 
         if (!userProfile.length) {
@@ -87,7 +88,8 @@ module.exports = {
                     bet,
                     `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
                     bet,
-                    userProfile[0].Wallet
+                    userProfile[0].Wallet,
+                    interaction.user
                 );
             } else {
                 await Profile.updateOne(
@@ -100,14 +102,16 @@ module.exports = {
                     bet,
                     `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
                     bet,
-                    userProfile[0].Wallet
+                    userProfile[0].Wallet,
+                    interaction.user
                 );
             }
         } else {
             coinflipEmbed = await getCustomColorAnswerEmbed(
                 "Coin Flip",
                 `You dont have enough money!`,
-                "Red"
+                "Red",
+                interaction.user
             );
         }
 

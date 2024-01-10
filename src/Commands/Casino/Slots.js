@@ -33,6 +33,17 @@ module.exports = {
             });
         }
 
+        if (bet < 100 ) {
+            var betNotValid = await getDefaultNegativeAnswerEmbed(
+                ":x: Bet not valid",
+                `The minimum bet for this game is 100!`
+            );
+
+            return await interaction.reply({
+                embeds: [betNotValid],
+            });
+        }
+
         const guild = interaction.guild;
         const user = interaction.user;
         const userProfile = await Profile.find({
@@ -47,7 +58,8 @@ module.exports = {
         var slotsEmbed = await getCustomColorAnswerEmbed(
             "Slots",
             `The Machine is not working properly`,
-            "Orange"
+            "Orange",
+            interaction.user
         );
 
         if (!userProfile.length) {
@@ -98,7 +110,7 @@ module.exports = {
                 { name: ":star:", value: 13, mult: 1 },
             ];
 
-            slotsEmbed = await getCustomColorAnswerEmbed("Slots", `Spin!`, "Gold");
+            slotsEmbed = await getCustomColorAnswerEmbed("Slots", `Spin!`, "Gold", interaction.user);
 
             let slotTop1 = items[Math.floor(Math.random() * items.length)];
             let slotTop2 = items[Math.floor(Math.random() * items.length)];
@@ -113,7 +125,8 @@ module.exports = {
                 var updatedSlotsEmbed = await getCustomColorAnswerEmbed(
                     "Slots",
                     `${showItems[i].name} ${showItems[i].name} ${showItems[i].name}`,
-                    "Gold");
+                    "Gold",
+                    interaction.user);
 
                 await interaction.editReply({ embeds: [updatedSlotsEmbed] });
             }
@@ -146,7 +159,8 @@ module.exports = {
                     `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
                     Multiplier: ${multiplier}`,
                     win - bet,
-                    userProfile[0].Wallet
+                    userProfile[0].Wallet,
+                    interaction.user
                 );
             } else if(multiplier == 1) {
                 slotsEmbed = await getDefaultDrawEmbed(
@@ -154,7 +168,8 @@ module.exports = {
                     bet,
                     `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
                     Multiplier: ${multiplier}`,
-                    userProfile[0].Wallet
+                    userProfile[0].Wallet,
+                    interaction.user
                 );
             } else if(multiplier < 1) {
                 await Profile.updateOne(
@@ -168,14 +183,16 @@ module.exports = {
                     `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
                     Multiplier: ${multiplier}`,
                     bet - win,
-                    userProfile[0].Wallet
+                    userProfile[0].Wallet,
+                    interaction.user
                 );
             }
         } else {
             slotsEmbed = await getCustomColorAnswerEmbed(
                 "Slots",
                 `You dont have enough money!`,
-                "Red"
+                "Red",
+                interaction.user
             );
 
             return await interaction.reply({

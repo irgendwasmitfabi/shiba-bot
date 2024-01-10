@@ -1,10 +1,40 @@
 const { SlashCommandBuilder } = require('discord.js');
+const Profile = require("../../Models/Profile");
+const { getUserInformationEmbed, getDefaultNeutralAnswerEmbed } = require("../../Logic/Embed");
+const { createProfile } = require('../../Logic/Utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('user')
-		.setDescription('Provides information about the user.'),
+		.setDescription('Provides information about the user.')
+		.addUserOption((option) => option.setName('target').setDescription('The user to information about').setRequired(false)),
 	async execute(interaction) {
-		await interaction.reply(`This command was run by ${interaction.user.username}, who joined on ${interaction.member.joinedAt}.`);
+		const user = interaction.options.getUser('target') || interaction.user;
+
+        const userProfile = await Profile.find({
+            UserID: user.id,
+            GuildID: interaction.guild.id,
+        });
+
+		if (!userProfile.length) {
+			if (user !== interaction.user) return interaction.reply(`${user} has no profile.`);
+			
+            await createProfile(user, interaction.guild);
+
+            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
+                "Profile not found",
+                `Creating new profile...`
+            );
+
+            return await interaction.reply({
+                embeds: [profileNotFoundEmbed],
+            });
+        }
+
+		var userInformationEmbed = await getUserInformationEmbed(user, userProfile[0]);
+
+		return await interaction.reply({
+			embeds: [userInformationEmbed],
+		});
 	},
 };

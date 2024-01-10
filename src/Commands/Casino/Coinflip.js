@@ -50,7 +50,7 @@ module.exports = {
             GuildID: guild.id,
         });
 
-        if (bet === "a") {
+        if (bet === "a" && userProfile[0].Wallet > 0) {
             bet = userProfile[0].Wallet;
         }
         

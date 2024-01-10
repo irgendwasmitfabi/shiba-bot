@@ -32,7 +32,7 @@ module.exports = {
                 `Your bet: ${bet}:coin:\n
                 ${gameDescription}\n
                 Lost: ${lost}:coin:\n
-                Your Wallet: ${walletValue - bet}:coin:`)
+                Your Wallet: ${walletValue -= Number(lost)}:coin:`)
             .setColor("Red")
     },
     getDefaultWinEmbed: async function getDefaultWinEmbed(gameTitle, bet, gameDescription, profit, walletValue) {
@@ -42,8 +42,17 @@ module.exports = {
                 `Your bet: ${bet}:coin:\n
                 ${gameDescription}\n
                 Your Profit: ${profit}:coin:\n
-                Your Wallet: ${walletValue + bet}:coin:`)
+                Your Wallet: ${walletValue += Number(profit)}:coin:`)
             .setColor("Green")
+    },
+    getDefaultDrawEmbed: async function getDefaultDrawEmbed(gameTitle, bet, gameDescription, walletValue) {
+        return new EmbedBuilder()
+            .setTitle(gameTitle + " - Draw!")
+            .setDescription(
+                `Your bet: ${bet}:coin:\n
+                ${gameDescription}\n
+                Your Wallet: ${walletValue}:coin:`)
+            .setColor("Yellow")
     },
     getMinecraftRecipeEmbed: async function getMinecraftRecipeEmbed(recipeName, imgURL) {
         return new EmbedBuilder()

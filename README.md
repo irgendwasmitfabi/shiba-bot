@@ -5,9 +5,11 @@
 
 ## Functions
 - 💵 Economy
+- 🔢 Level System
 - 🎰 Gambling
 - 🎮 Show Minecraft Recipes
 - 🐶 Tamagotchi (Coming soon..)
+- 🧭 RPG (Coming soon..)
   
 ## .env example
     adminId=

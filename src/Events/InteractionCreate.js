@@ -1,4 +1,7 @@
 const { Events } = require('discord.js');
+const Profile = require("../Models/Profile");
+const { getUserLevelUpEmbed } = require("../Logic/Embed");
+const { createProfile, checkIfLevelUp, giveXPToUser } = require('../Logic/Utils');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -13,7 +16,12 @@ module.exports = {
 		}
 
 		try {
+			await giveXPToUser(interaction.user, interaction.guild, 2);
+
 			await command.execute(interaction);
+
+			await checkIfUserLeveledUp(interaction);
+
 		} catch (error) {
 			console.error(error);
 			if (interaction.replied || interaction.deferred) {
@@ -24,3 +32,23 @@ module.exports = {
 		}
 	},
 };
+
+async function checkIfUserLeveledUp(interaction) {
+	try {
+		const result = await checkIfLevelUp(interaction.user, interaction.guild);
+		if (result === true) {
+			const userProfile = await Profile.find({ UserID: interaction.user.id, GuildID: interaction.guild.id });
+
+			const getUserLevelEmbed = await getUserLevelUpEmbed(
+				interaction.user,
+				userProfile[0],
+			);
+
+			return interaction.followUp({
+				embeds: [getUserLevelEmbed],
+			});
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}

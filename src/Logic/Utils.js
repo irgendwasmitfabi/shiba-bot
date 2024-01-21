@@ -5,11 +5,56 @@ module.exports = {
     const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
     if (!profile.length) {
       await new Profile({
+        CurrentXP: 0,
         GuildID: guild.id,
+        lastDaily: new Date().setDate(new Date().getDate() - 25),
+        Level: 1,
         UserID: user.id,
         Wallet: 0,
-        lastDaily: new Date().setDate(new Date().getDate() - 25),
+        XPForNextLevel: 250,
       }).save();
     }
-  }
+  },
+  checkIfLevelUp: async function checkIfLevelUp(user, guild) {
+    const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
+
+    const currentXP = profile[0].CurrentXP;
+    var currentLevel = profile[0].Level;
+    var xpForNextLevel = profile[0].XPForNextLevel
+
+    const nextLevel = currentLevel + 1;
+    // I assume here that the user can only level up one level at a time
+    if (currentLevel && currentXP) {
+      if (currentXP > xpForNextLevel) {
+        await Profile.updateOne(
+          { UserID: user.id, GuildID: guild.id },
+          { $set: { Level: nextLevel } }
+        );
+        await Profile.updateOne(
+          { UserID: user.id, GuildID: guild.id },
+          { $inc: { Wallet:  nextLevel * 100} }
+        );
+
+        xpForNextLevel = nextLevel * 250;
+        await Profile.updateOne(
+          { UserID: user.id, GuildID: guild.id },
+          { $set: { XPForNextLevel: xpForNextLevel } }
+        );
+        return true;
+      }
+
+      return false;
+    }
+  },
+  giveXPToUser: async function giveXPToUser(user, guild, amount) {
+    try {
+      await Profile.updateOne(
+        { UserID: user.id, GuildID: guild.id },
+        { $inc: { CurrentXP: amount } }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+  },
 };

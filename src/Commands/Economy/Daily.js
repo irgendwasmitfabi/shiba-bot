@@ -1,5 +1,5 @@
 const Profile = require("../../Models/Profile");
-const { createProfile } = require('../../Logic/Utils');
+const { createProfile, giveXPToUser } = require('../../Logic/Utils');
 const { getCustomColorAnswerEmbed, getDefaultNeutralAnswerEmbed } = require("../../Logic/Embed");
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -48,6 +48,8 @@ module.exports = {
         "Green",
         interaction.user
       );
+
+      await giveXPToUser(interaction.user, interaction.guild, 5);
     } else if (Date.now() - userProfile[0].lastDaily > 86400000) {
       await Profile.updateOne(
         { UserID: userId, GuildID: guildId },
@@ -65,6 +67,8 @@ module.exports = {
         "Green",
         interaction.user
       );
+
+      await giveXPToUser(interaction.user, interaction.guild, 5);
     } else {
       const lastDaily = new Date(userProfile[0].lastDaily);
 

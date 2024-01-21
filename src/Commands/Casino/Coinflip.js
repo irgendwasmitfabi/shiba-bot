@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
+const { createProfile, giveXPToUser } = require('../../Logic/Utils');
+
 const {
     getCustomColorAnswerEmbed,
     getDefaultNeutralAnswerEmbed,
@@ -76,7 +78,6 @@ module.exports = {
                 embeds: [profileNotFoundEmbed],
             });
         } else if (bet <= userProfile[0].Wallet) {
-
             if (prediction === result) {
                 await Profile.updateOne(
                     { UserID: interaction.user.id, GuildID: guild.id },
@@ -91,6 +92,7 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
+                await giveXPToUser(interaction.user, interaction.guild, 10);
             } else {
                 await Profile.updateOne(
                     { UserID: interaction.user.id, GuildID: guild.id },
@@ -105,6 +107,8 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
+
+                await giveXPToUser(interaction.user, interaction.guild, 5);
             }
         } else {
             coinflipEmbed = await getCustomColorAnswerEmbed(

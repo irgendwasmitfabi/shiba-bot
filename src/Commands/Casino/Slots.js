@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const { createProfile, giveXPToUser } = require('../../Logic/Utils');
 const Profile = require("../../Models/Profile");
 const {
     getCustomColorAnswerEmbed,
@@ -162,6 +163,8 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
+
+                await giveXPToUser(interaction.user, interaction.guild, 10);
             } else if(multiplier == 1) {
                 slotsEmbed = await getDefaultDrawEmbed(
                     "Slots",
@@ -171,6 +174,8 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
+
+                await giveXPToUser(interaction.user, interaction.guild, 5);
             } else if(multiplier < 1) {
                 await Profile.updateOne(
                     { UserID: interaction.user.id, GuildID: guild.id },
@@ -186,6 +191,8 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
+
+                await giveXPToUser(interaction.user, interaction.guild, 5);
             }
         } else {
             slotsEmbed = await getCustomColorAnswerEmbed(

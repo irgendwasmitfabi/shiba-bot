@@ -34,6 +34,9 @@ module.exports = {
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
+        const guild = interaction.guild;
+        const user = interaction.user;
+
         if (isNaN(bet) && bet !== "a") {
             var betNotValid = await getDefaultNegativeAnswerEmbed(
                 ":x: Bet not valid",
@@ -45,12 +48,23 @@ module.exports = {
             });
         }
 
-        const guild = interaction.guild;
-        const user = interaction.user;
         const userProfile = await Profile.find({
             UserID: user.id,
             GuildID: guild.id,
         });
+
+        if (!userProfile.length) {
+            await createProfile(interaction.user, interaction.guild);
+
+            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
+                "Profile not found",
+                `Creating new profile...`
+            );
+
+            return await interaction.reply({
+                embeds: [profileNotFoundEmbed],
+            });
+        }
 
         if (bet === "a" && userProfile[0].Wallet > 0) {
             bet = userProfile[0].Wallet;
@@ -66,18 +80,7 @@ module.exports = {
             interaction.user
         );
 
-        if (!userProfile.length) {
-            await createProfile(interaction.user, interaction.guild);
-
-            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-                "Profile not found",
-                `Creating new profile...`
-            );
-
-            return await interaction.reply({
-                embeds: [profileNotFoundEmbed],
-            });
-        } else if (bet <= userProfile[0].Wallet) {
+        if (bet <= userProfile[0].Wallet) {
             if (prediction === result) {
                 await Profile.updateOne(
                     { UserID: interaction.user.id, GuildID: guild.id },

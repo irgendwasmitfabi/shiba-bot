@@ -97,18 +97,18 @@ module.exports = {
                 { name: "🍒", value: 4, mult: 0.1 },
                 { name: "🍒", value: 4, mult: 0.1 },
                 { name: "🍒", value: 4, mult: 0.1 },
-                { name: "🍋", value: 5, mult: 0 },
-                { name: "🍋", value: 6, mult: 0 },
-                { name: "🍋", value: 7, mult: 0 },
-                { name: "🍋", value: 8, mult: 0 },
-                { name: "🍋", value: 8, mult: 0 },
-                { name: "🍇", value: 9, mult: 0.5 },
-                { name: "🍇", value: 10, mult: 0.5 },
-                { name: "🍇", value: 11, mult: 0.5 },
-                { name: "🍇", value: 11, mult: 0.5 },
-                { name: ":star:", value: 12, mult: 1 },
-                { name: ":star:", value: 13, mult: 1 },
-                { name: ":star:", value: 13, mult: 1 },
+                //{ name: "🍋", value: 5, mult: 0 },
+                //{ name: "🍋", value: 6, mult: 0 },
+                //{ name: "🍋", value: 7, mult: 0 },
+                //{ name: "🍋", value: 8, mult: 0 },
+                //{ name: "🍋", value: 8, mult: 0 },
+                //{ name: "🍇", value: 9, mult: 0.5 },
+                //{ name: "🍇", value: 10, mult: 0.5 },
+                //{ name: "🍇", value: 11, mult: 0.5 },
+                //{ name: "🍇", value: 11, mult: 0.5 },
+                //{ name: ":star:", value: 12, mult: 1 },
+                //{ name: ":star:", value: 13, mult: 1 },
+                //{ name: ":star:", value: 13, mult: 1 },
             ];
 
             slotsEmbed = await getCustomColorAnswerEmbed("Slots", `Spin!`, "Gold", interaction.user);
@@ -133,14 +133,15 @@ module.exports = {
             }
 
             let results = [slotTop1, slotTop2, slotTop3];
-            let multiplier = 0;
-
+            let result = 0;
             results.forEach((slot) => {
-                (multiplier += slot.mult);
+                (result += slot.mult);
             });
 
-            win = bet * multiplier;
+            var multiplier = Math.round(result * 100) / 100;
 
+            win = bet * multiplier;
+            
             win = Math.round(win * 100) / 100;
             bet = Math.round(bet * 100) / 100;
 

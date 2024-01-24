@@ -9,15 +9,14 @@ module.exports = {
 		.setDescription('Check your wallet')
         .addUserOption((option) => option.setName('target').setDescription('The user to see the Wallet from').setRequired(false)),
 	async execute(interaction) {
-        const guild = interaction.guild;
         const user = interaction.options.getUser('target') || interaction.user;
 
-        const userProfile = await Profile.find({ UserID: user.id, GuildID: guild.id });
+        const userProfile = await Profile.find({ UserID: user.id });
 
         if (!userProfile.length) {
             if (user !== interaction.user) return interaction.reply(`${user} has no profile.`);
 
-            await createProfile(interaction.user, guild);
+            await createProfile(interaction.user);
 
             var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
                 "Profile not found",

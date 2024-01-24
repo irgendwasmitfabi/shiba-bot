@@ -1,12 +1,11 @@
 const Profile = require('../Models/Profile');
 
 module.exports = {
-  createProfile: async function createProfile(user, guild) {
-    const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
+  createProfile: async function createProfile(user) {
+    const profile = await Profile.find({ UserID: user.id });
     if (!profile.length) {
       await new Profile({
         CurrentXP: 0,
-        GuildID: guild.id,
         lastDaily: new Date().setDate(new Date().getDate() - 25),
         Level: 1,
         UserID: user.id,
@@ -15,8 +14,8 @@ module.exports = {
       }).save();
     }
   },
-  checkIfLevelUp: async function checkIfLevelUp(user, guild) {
-    const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
+  checkIfLevelUp: async function checkIfLevelUp(user) {
+    const profile = await Profile.find({ UserID: user.id });
 
     const currentXP = profile[0].CurrentXP;
     var currentLevel = profile[0].Level;
@@ -27,17 +26,17 @@ module.exports = {
     if (currentLevel && currentXP) {
       if (currentXP > xpForNextLevel) {
         await Profile.updateOne(
-          { UserID: user.id, GuildID: guild.id },
+          { UserID: user.id },
           { $set: { Level: nextLevel } }
         );
         await Profile.updateOne(
-          { UserID: user.id, GuildID: guild.id },
+          { UserID: user.id },
           { $inc: { Wallet:  nextLevel * 100} }
         );
 
         xpForNextLevel = nextLevel * 250;
         await Profile.updateOne(
-          { UserID: user.id, GuildID: guild.id },
+          { UserID: user.id },
           { $set: { XPForNextLevel: xpForNextLevel } }
         );
         return true;
@@ -46,10 +45,10 @@ module.exports = {
       return false;
     }
   },
-  giveXPToUser: async function giveXPToUser(user, guild, amount) {
+  giveXPToUser: async function giveXPToUser(user, amount) {
     try {
       await Profile.updateOne(
-        { UserID: user.id, GuildID: guild.id },
+        { UserID: user.id },
         { $inc: { CurrentXP: amount } }
       );
     } catch (error) {

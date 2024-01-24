@@ -16,7 +16,7 @@ module.exports = {
 		}
 
 		try {
-			await giveXPToUser(interaction.user, interaction.guild, 2);
+			await giveXPToUser(interaction.user, 2);
 
 			await command.execute(interaction);
 
@@ -35,9 +35,9 @@ module.exports = {
 
 async function checkIfUserLeveledUp(interaction) {
 	try {
-		const result = await checkIfLevelUp(interaction.user, interaction.guild);
+		const result = await checkIfLevelUp(interaction.user);
 		if (result === true) {
-			const userProfile = await Profile.find({ UserID: interaction.user.id, GuildID: interaction.guild.id });
+			const userProfile = await Profile.find({ UserID: interaction.user.id });
 
 			const getUserLevelEmbed = await getUserLevelUpEmbed(
 				interaction.user,

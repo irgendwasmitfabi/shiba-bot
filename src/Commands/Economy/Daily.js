@@ -9,7 +9,6 @@ module.exports = {
     .setDescription("Get your daily award"),
   async execute(interaction) {
     const dailyReward = process.env.dailyReward;
-    const guildId = interaction.guild.id;
     const userId = interaction.user.id;
 
     var dailyRewardEmbed = await getCustomColorAnswerEmbed(
@@ -19,9 +18,9 @@ module.exports = {
       interaction.user
     );
     
-    const userProfile = await Profile.find({ UserID: userId, GuildID: guildId });
+    const userProfile = await Profile.find({ UserID: userId });
     if (!userProfile.length) {
-      await createProfile(interaction.user, interaction.guild);
+      await createProfile(interaction.user);
 
       var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
         "Profile not found",
@@ -33,12 +32,12 @@ module.exports = {
       });
     } else if (userProfile[0].lastDaily === "undefined") {
       await Profile.updateOne(
-        { UserID: userId, GuildID: guildId },
+        { UserID: userId },
         { $set: { lastDaily: Date.now() } }
       );
 
       await Profile.updateOne(
-        { UserID: userId, GuildID: guildId },
+        { UserID: userId },
         { $inc: { Wallet: dailyReward } }
       );
 
@@ -49,15 +48,15 @@ module.exports = {
         interaction.user
       );
 
-      await giveXPToUser(interaction.user, interaction.guild, 5);
+      await giveXPToUser(interaction.user, 5);
     } else if (Date.now() - userProfile[0].lastDaily > 86400000) {
       await Profile.updateOne(
-        { UserID: userId, GuildID: guildId },
+        { UserID: userId },
         { $set: { lastDaily: Date.now() } }
       );
 
       await Profile.updateOne(
-        { UserID: userId, GuildID: guildId },
+        { UserID: userId },
         { $inc: { Wallet: 25 } }
       );
 
@@ -68,7 +67,7 @@ module.exports = {
         interaction.user
       );
 
-      await giveXPToUser(interaction.user, interaction.guild, 5);
+      await giveXPToUser(interaction.user, 5);
     } else {
       const lastDaily = new Date(userProfile[0].lastDaily);
 

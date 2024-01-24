@@ -13,13 +13,12 @@ module.exports = {
 
         const userProfile = await Profile.find({
             UserID: user.id,
-            GuildID: interaction.guild.id,
         });
 
 		if (!userProfile.length) {
 			if (user !== interaction.user) return interaction.reply(`${user} has no profile.`);
 			
-            await createProfile(user, interaction.guild);
+            await createProfile(user);
 
             var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
                 "Profile not found",

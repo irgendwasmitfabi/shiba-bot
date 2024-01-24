@@ -34,7 +34,6 @@ module.exports = {
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
-        const guild = interaction.guild;
         const user = interaction.user;
 
         if (isNaN(bet) && bet !== "a") {
@@ -50,11 +49,10 @@ module.exports = {
 
         const userProfile = await Profile.find({
             UserID: user.id,
-            GuildID: guild.id,
         });
 
         if (!userProfile.length) {
-            await createProfile(interaction.user, interaction.guild);
+            await createProfile(interaction.user);
 
             var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
                 "Profile not found",
@@ -83,7 +81,7 @@ module.exports = {
         if (bet <= userProfile[0].Wallet) {
             if (prediction === result) {
                 await Profile.updateOne(
-                    { UserID: interaction.user.id, GuildID: guild.id },
+                    { UserID: interaction.user.id },
                     { $inc: { Wallet: bet } }
                 );
 
@@ -95,10 +93,10 @@ module.exports = {
                     userProfile[0].Wallet,
                     interaction.user
                 );
-                await giveXPToUser(interaction.user, interaction.guild, 10);
+                await giveXPToUser(interaction.user, 10);
             } else {
                 await Profile.updateOne(
-                    { UserID: interaction.user.id, GuildID: guild.id },
+                    { UserID: interaction.user.id },
                     { $inc: { Wallet: -bet } }
                 );
 
@@ -111,7 +109,7 @@ module.exports = {
                     interaction.user
                 );
 
-                await giveXPToUser(interaction.user, interaction.guild, 5);
+                await giveXPToUser(interaction.user, 5);
             }
         } else {
             coinflipEmbed = await getCustomColorAnswerEmbed(

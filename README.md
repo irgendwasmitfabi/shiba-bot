@@ -15,7 +15,6 @@
     adminId=
     clientId=
     dailyReward=
-    guildId=
     mongoURL=
     token=
 

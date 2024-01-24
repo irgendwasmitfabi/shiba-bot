@@ -45,11 +45,9 @@ module.exports = {
             });
         }
 
-        const guild = interaction.guild;
         const user = interaction.user;
         const userProfile = await Profile.find({
             UserID: user.id,
-            GuildID: guild.id,
         });
 
         if (bet === "a" && userProfile[0].Wallet > 0) {
@@ -64,7 +62,7 @@ module.exports = {
         );
 
         if (!userProfile.length) {
-            await createProfile(interaction.user, interaction.guild);
+            await createProfile(interaction.user);
 
             var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
                 "Profile not found",
@@ -147,11 +145,11 @@ module.exports = {
 
             if (win > bet) {
                 await Profile.updateOne(
-                    { UserID: interaction.user.id, GuildID: guild.id },
+                    { UserID: interaction.user.id },
                     { $inc: { Wallet: -bet } }
                 );
                 await Profile.updateOne(
-                    { UserID: interaction.user.id, GuildID: guild.id },
+                    { UserID: interaction.user.id },
                     { $inc: { Wallet: win } }
                   );
 
@@ -165,7 +163,7 @@ module.exports = {
                     interaction.user
                 );
 
-                await giveXPToUser(interaction.user, interaction.guild, 10);
+                await giveXPToUser(interaction.user, 10);
             } else if(multiplier == 1) {
                 slotsEmbed = await getDefaultDrawEmbed(
                     "Slots",
@@ -176,10 +174,10 @@ module.exports = {
                     interaction.user
                 );
 
-                await giveXPToUser(interaction.user, interaction.guild, 5);
+                await giveXPToUser(interaction.user, 5);
             } else if(multiplier < 1) {
                 await Profile.updateOne(
-                    { UserID: interaction.user.id, GuildID: guild.id },
+                    { UserID: interaction.user.id },
                     { $inc: { Wallet: win-bet } }
                   );
 
@@ -193,7 +191,7 @@ module.exports = {
                     interaction.user
                 );
 
-                await giveXPToUser(interaction.user, interaction.guild, 5);
+                await giveXPToUser(interaction.user, 5);
             }
         } else {
             slotsEmbed = await getCustomColorAnswerEmbed(

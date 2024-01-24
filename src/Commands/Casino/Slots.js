@@ -8,6 +8,7 @@ const {
     getDefaultLoseEmbed,
     getDefaultDrawEmbed,
     getDefaultNegativeAnswerEmbed,
+    getSlotsIdleEmbed
 } = require("../../Logic/Embed");
 
 module.exports = {
@@ -73,62 +74,40 @@ module.exports = {
                 embeds: [profileNotFoundEmbed],
             });
         } else if (bet <= userProfile[0].Wallet) {
-            const showItems = [
-                { name: "🍒", value: 1, mult: 0.1 },
-                { name: "🍋", value: 5, mult: 0 },
-                { name: "🍇", value: 9, mult: 0.5 },
-                { name: ":star:", value: 12, mult: 1 },
-                { name: "🍒", value: 1, mult: 0.1 },
-                { name: "🍋", value: 5, mult: 0 },
-                { name: "🍇", value: 9, mult: 0.5 },
-                { name: ":star:", value: 12, mult: 1 },
-                { name: "🍒", value: 1, mult: 0.1 },
-                { name: "🍋", value: 5, mult: 0 },
-                { name: "🍇", value: 9, mult: 0.5 },
-                { name: ":star:", value: 12, mult: 1 },
-            ];
             const items = [
-                { name: "🍒", value: 1, mult: 0.1 },
-                { name: "🍒", value: 2, mult: 0.1 },
-                { name: "🍒", value: 3, mult: 0.1 },
-                { name: "🍒", value: 4, mult: 0.1 },
-                { name: "🍒", value: 4, mult: 0.1 },
-                { name: "🍒", value: 4, mult: 0.1 },
-                { name: "🍒", value: 4, mult: 0.1 },
-                //{ name: "🍋", value: 5, mult: 0 },
-                //{ name: "🍋", value: 6, mult: 0 },
-                //{ name: "🍋", value: 7, mult: 0 },
-                //{ name: "🍋", value: 8, mult: 0 },
-                //{ name: "🍋", value: 8, mult: 0 },
-                //{ name: "🍇", value: 9, mult: 0.5 },
-                //{ name: "🍇", value: 10, mult: 0.5 },
-                //{ name: "🍇", value: 11, mult: 0.5 },
-                //{ name: "🍇", value: 11, mult: 0.5 },
-                //{ name: ":star:", value: 12, mult: 1 },
-                //{ name: ":star:", value: 13, mult: 1 },
-                //{ name: ":star:", value: 13, mult: 1 },
+                { name: "<:cherry:1199828030634348646>", value: 1, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 2, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 3, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
+                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
+                { name: "<:blueFruit:1199828063425409115>", value: 5, mult: 0 },
+                { name: "<:blueFruit:1199828063425409115>", value: 6, mult: 0 },
+                { name: "<:blueFruit:1199828063425409115>", value: 7, mult: 0 },
+                { name: "<:blueFruit:1199828063425409115>", value: 8, mult: 0 },
+                { name: "<:blueFruit:1199828063425409115>", value: 8, mult: 0 },
+                { name: "<:purpleFruit:1199828169742618675>", value: 9, mult: 0.5 },
+                { name: "<:purpleFruit:1199828169742618675>", value: 10, mult: 0.5 },
+                { name: "<:purpleFruit:1199828169742618675>", value: 11, mult: 0.5 },
+                { name: "<:purpleFruit:1199828169742618675>", value: 11, mult: 0.5 },
+                { name: "<:starFruit:1199828135047344138>", value: 12, mult: 1 },
+                { name: "<:starFruit:1199828135047344138>", value: 13, mult: 1 },
+                { name: "<:starFruit:1199828135047344138>", value: 13, mult: 1 },
             ];
 
-            slotsEmbed = await getCustomColorAnswerEmbed("Slots", `Spin!`, "Gold", interaction.user);
+            var animatedSlotsEmbed = await getSlotsIdleEmbed(
+                bet,
+                interaction.user
+            );
+
+            await interaction.reply({ embeds: [animatedSlotsEmbed] });
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             let slotTop1 = items[Math.floor(Math.random() * items.length)];
             let slotTop2 = items[Math.floor(Math.random() * items.length)];
             let slotTop3 = items[Math.floor(Math.random() * items.length)];
-
-            await interaction.reply({
-                embeds: [slotsEmbed],
-            });
-
-            //create animation
-            for (let i = 2; i < 12; i++) {
-                var updatedSlotsEmbed = await getCustomColorAnswerEmbed(
-                    "Slots",
-                    `${showItems[i].name} ${showItems[i].name} ${showItems[i].name}`,
-                    "Gold",
-                    interaction.user);
-
-                await interaction.editReply({ embeds: [updatedSlotsEmbed] });
-            }
 
             let results = [slotTop1, slotTop2, slotTop3];
             let result = 0;

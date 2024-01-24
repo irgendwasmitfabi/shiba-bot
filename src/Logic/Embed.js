@@ -58,6 +58,15 @@ module.exports = {
             .setColor("Yellow")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
+    getSlotsIdleEmbed: async function getSlotsIdleEmbed(bet, user) {
+        return new EmbedBuilder()
+            .setTitle("Slots")
+            .setDescription(
+                `Your bet: ${bet}:coin:\n
+                <a:slots1:1199827995729350777> <a:slots1:1199827995729350777> <a:slots1:1199827995729350777>\n`)
+            .setColor("Gold")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
+    },
     getMinecraftRecipeEmbed: async function getMinecraftRecipeEmbed(recipeName, imgURL) {
         return new EmbedBuilder()
             .setTitle(recipeName)

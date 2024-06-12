@@ -23,16 +23,20 @@ module.exports = {
         ),
     async execute(interaction) {
         var bet = interaction.options.getString("bet");
+        
+        if (bet !== "a") {
+            bet = parseInt(bet, 10);
 
-        if (isNaN(bet) && bet !== "a") {
-            var betNotValid = await getDefaultNegativeAnswerEmbed(
-                ":x: Bet not valid",
-                `Please enter a valid bet`
-            );
-
-            return await interaction.reply({
-                embeds: [betNotValid],
-            });
+            if (isNaN(bet) || !Number.isInteger(bet)) {
+                var betNotValid = await getDefaultNegativeAnswerEmbed(
+                    ":x: Bet not valid",
+                    `Please enter a valid bet`
+                );
+    
+                return await interaction.reply({
+                    embeds: [betNotValid],
+                });
+            }
         }
 
         if (bet < 100 ) {
@@ -120,6 +124,7 @@ module.exports = {
             win = bet * multiplier;
             
             win = Math.round(win * 100) / 100;
+            win = parseInt(win, 10);
             bet = Math.round(bet * 100) / 100;
 
             if (win > bet) {

@@ -39,7 +39,7 @@ module.exports = {
             }
         }
 
-        if (bet < 100 ) {
+        if (bet < 10 ) {
             var betNotValid = await getDefaultNegativeAnswerEmbed(
                 ":x: Bet not valid",
                 `The minimum bet for this game is 100!`

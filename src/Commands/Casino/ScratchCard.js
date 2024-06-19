@@ -3,9 +3,11 @@ const Profile = require("../../Models/Profile");
 const { createProfile, giveXPToUser } = require('../../Logic/Utils');
 const { getThreePieceRow } = require('../../Logic/ScratchCard/ButtonHandler');
 const { ComponentType } = require('discord.js');
+const ApeWinPool = require('../../Data/Scratchcard/ApeWinPool.json');
+const DinoWinPool = require('../../Data/Scratchcard/DinoWinPool.json');
+
 const {
     getDefaultNeutralAnswerEmbed,
-    getDefaultWinEmbed,
     getDefaultNegativeAnswerEmbed,
     getCustomColorAnswerEmbed,
     getScratchCardEmbed
@@ -21,20 +23,23 @@ module.exports = {
                 .setDescription("Choose the scratchcard")
                 .setRequired(true)
                 .addChoices(
-                    { name: "Apes 300 Coins", value: "apes" },
-                    { name: "Dinosaurs 500 Coins", value: "dinosaurs" }
+                    { name: "Dark Chao 300 Coins", value: "darkchao" },
+                    { name: "Omo Chao 500 Coins", value: "omochao" }
                 )
         ),
     async execute(interaction) {
         var scratchCardOption = interaction.options.getString("options");
 
+        var winPool;
         var bet;
         switch (scratchCardOption) {
-            case "apes":
+            case "darkchao":
                 bet = 300;
+                winPool = ApeWinPool.winnings;
                 break;
-            case "dinosaurs":
+            case "omochao":
                 bet = 500;
+                winPool = DinoWinPool.winnings;
                 break;
             default:
                 //Handle case?
@@ -100,9 +105,9 @@ module.exports = {
             });
         }
 
-        var buttons = await getThreePieceRow("🦍", "1");
-        var buttons1 = await getThreePieceRow("🦧", "2");
-        var buttons2 = await getThreePieceRow("🐒", "3");
+        var buttons = await getThreePieceRow( "1", scratchCardOption);
+        var buttons1 = await getThreePieceRow("2", scratchCardOption);
+        var buttons2 = await getThreePieceRow("3", scratchCardOption);
 
         var allButtonsArray = buttons.concat(buttons1, buttons2);
 
@@ -121,7 +126,7 @@ module.exports = {
 
         var values = [];
         allButtonsArray.forEach(button => {
-            var selectedPoolNumber = getSelectedPoolNumber(values);
+            var selectedPoolNumber = getSelectedPoolNumber(values, winPool);
 
             values.push(selectedPoolNumber);
         });
@@ -150,7 +155,7 @@ module.exports = {
                 clickedButtonsCount++;
                 if (clickedButtonsCount === allButtonsArrayLength) {
                     checkForWin(values, 3, interaction);
-                    buttonInteraction.reply({ content: `Game Finished` });
+                    buttonInteraction.reply({ content: `Game Finished`, ephemeral: true });
                 } else {
                     buttonInteraction.deferUpdate();
                 }
@@ -160,8 +165,10 @@ module.exports = {
         });
         
         collector.on('end', collected => {
-            // Interaction is no longer available
-            console.log(`Collected ${collected.size} interactions.`);
+            console.log(collected);
+            if (collected >= 9) {
+                interaction.deleteReply();
+            }
         });
     },
 };
@@ -198,59 +205,28 @@ function getButtonIndex(buttonCustomId) {
     return buttonIndex - 1;
 }
 
-function getRandomValue() {
-    var jsonData = [
-        {
-          "value": 1000,
-          "probability": 0.025
-        },
-        {
-          "value": 500,
-          "probability": 0.05
-        },
-        {
-          "value": 400,
-          "probability": 0.075
-        },
-        {
-          "value": 300,
-          "probability": 0.1
-        },
-        {
-          "value": 200,
-          "probability": 0.15
-        },
-        {
-          "value": 100,
-          "probability": 0.2
-        },
-        {
-          "value": 50,
-          "probability": 0.4
-        }
-    ];
-
+function getRandomValue(winPool) {
     var rand = Math.random();
     var cumulativeProbability = 0;
-    for (var i = 0; i < jsonData.length; i++) {
-        cumulativeProbability += jsonData[i].probability;
+    for (var i = 0; i < winPool.length; i++) {
+        cumulativeProbability += winPool[i].probability;
         if (rand < cumulativeProbability) {
-            return jsonData[i].value;
+            return winPool[i].value;
         }
     }
 
-    return jsonData[jsonData.length - 1].value;
+    return winPool[winPool.length - 1].value;
 }
 
-function getSelectedPoolNumber(values) {
-    var selectedPoolNumber = getRandomValue();
+function getSelectedPoolNumber(values, winPool) {
+    var selectedPoolNumber = getRandomValue(winPool);
     var result = checkForThreeSameNumbers(values, 3);
 
     var alreadyThreeSameNumbers = result != null && Array.isArray(result) && result.includes(selectedPoolNumber);
     console.log(alreadyThreeSameNumbers);
 
     while (alreadyThreeSameNumbers) {
-        selectedPoolNumber = getRandomValue();
+        selectedPoolNumber = getRandomValue(winPool);
 
         result = checkForThreeSameNumbers(values, 3);
 
@@ -271,10 +247,22 @@ async function checkForWin(values, amountToWin, interaction) {
             console.log(winnings);
         });
 
-        var scratchCardEmbed = await getScratchCardEmbed(
+        scratchCardEmbed = await getScratchCardEmbed(
             `You won ${winnings}:coin:!`,
             "Green"
         );
+
+        if (results !== 0) {
+            scratchCardEmbed = await getScratchCardEmbed(
+                `You won ${winnings}:coin:!`,
+                "Green"
+            );
+        } else {
+            scratchCardEmbed = await getScratchCardEmbed(
+                `You lost!`,
+                "Red"
+            );
+        }
 
         await interaction.editReply({
             embeds: [scratchCardEmbed]

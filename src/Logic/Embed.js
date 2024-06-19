@@ -91,5 +91,10 @@ module.exports = {
                 **Current XP**: ${profile.CurrentXP}XP of ${profile.XPForNextLevel}XP\n
                 You got ${profile.Level * 100}:coin:`)
             .setColor("LuminousVividPink")
-    }
+    },
+    getScratchCardEmbed: async function getScratchCardEmbed(title, color) {
+        return new EmbedBuilder()
+            .setTitle(`${title}`)
+            .setColor(color);
+    },
 };

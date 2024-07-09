@@ -19,4 +19,4 @@
     token=
 
 ## Sprites
-Art Concepts & Sprites by Leni
+Art Concepts & Sprites by MuskatnussTee

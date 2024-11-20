@@ -34,7 +34,7 @@ module.exports = {
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
-        const user = interaction.user;
+        var user = interaction.user;
 
         if (isNaN(bet) && bet !== "a") {
             var betNotValid = await getDefaultNegativeAnswerEmbed(
@@ -47,7 +47,7 @@ module.exports = {
             });
         }
 
-        const userProfile = await Profile.find({
+        var userProfile = await Profile.find({
             UserID: user.id,
         });
 
@@ -68,8 +68,8 @@ module.exports = {
             bet = userProfile[0].Wallet;
         }
         
-        let flip = Math.floor(Math.random() * 2);
-        let result = flip == 0 ? "heads" : "tails";
+        var flip = Math.floor(Math.random() * 2);
+        var result = flip == 0 ? "heads" : "tails";
 
         var coinflipEmbed = await getCustomColorAnswerEmbed(
             "Coin Flip",

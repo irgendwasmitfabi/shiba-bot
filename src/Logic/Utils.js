@@ -2,7 +2,7 @@ const Profile = require('../Models/Profile');
 
 module.exports = {
   createProfile: async function createProfile(user) {
-    const profile = await Profile.find({ UserID: user.id });
+    var profile = await Profile.find({ UserID: user.id });
     if (!profile.length) {
       await new Profile({
         CurrentXP: 0,
@@ -15,13 +15,13 @@ module.exports = {
     }
   },
   checkIfLevelUp: async function checkIfLevelUp(user) {
-    const profile = await Profile.find({ UserID: user.id });
+    var profile = await Profile.find({ UserID: user.id });
 
-    const currentXP = profile[0].CurrentXP;
+    var currentXP = profile[0].CurrentXP;
     var currentLevel = profile[0].Level;
     var xpForNextLevel = profile[0].XPForNextLevel
 
-    const nextLevel = currentLevel + 1;
+    var nextLevel = currentLevel + 1;
     // I assume here that the user can only level up one level at a time
     if (currentLevel && currentXP) {
       if (currentXP > xpForNextLevel) {

@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const Profile = require("../Models/Profile");
 const { getUserLevelUpEmbed } = require("../Logic/Embed");
-const { createProfile, checkIfLevelUp, giveXPToUser } = require('../Logic/Utils');
+const { checkIfLevelUp, giveXPToUser } = require('../Logic/Utils');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -35,11 +35,11 @@ module.exports = {
 
 async function checkIfUserLeveledUp(interaction) {
 	try {
-		const result = await checkIfLevelUp(interaction.user);
+		var result = await checkIfLevelUp(interaction.user);
 		if (result === true) {
-			const userProfile = await Profile.find({ UserID: interaction.user.id });
+			var userProfile = await Profile.find({ UserID: interaction.user.id });
 
-			const getUserLevelEmbed = await getUserLevelUpEmbed(
+			var getUserLevelEmbed = await getUserLevelUpEmbed(
 				interaction.user,
 				userProfile[0],
 			);

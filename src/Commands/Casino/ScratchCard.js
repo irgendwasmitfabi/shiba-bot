@@ -24,7 +24,7 @@ module.exports = {
                 .setRequired(true)
                 .addChoices(
                     { name: "Dark Chao 300 Coins", value: "darkchao" },
-                    { name: "Omo Chao 500 Coins", value: "omochao" }
+                    { name: "Hero Chao 500 Coins", value: "herochao" }
                 )
         ),
     async execute(interaction) {
@@ -37,7 +37,7 @@ module.exports = {
                 bet = 300;
                 winPool = ApeWinPool.winnings;
                 break;
-            case "omochao":
+            case "herochao":
                 bet = 500;
                 winPool = DinoWinPool.winnings;
                 break;
@@ -59,8 +59,8 @@ module.exports = {
         }
 
         //TODO: Move to handler!
-        const user = interaction.user;
-        const userProfile = await Profile.find({
+        var user = interaction.user;
+        var userProfile = await Profile.find({
             UserID: user.id,
         });
 
@@ -166,7 +166,7 @@ module.exports = {
         
         collector.on('end', collected => {
             console.log(collected);
-            if (collected >= 9) {
+            if (collected.length >= 9) {
                 interaction.deleteReply();
             }
         });

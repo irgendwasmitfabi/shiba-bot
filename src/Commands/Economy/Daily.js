@@ -18,7 +18,7 @@ module.exports = {
       interaction.user
     );
     
-    const userProfile = await Profile.find({ UserID: userId });
+    var userProfile = await Profile.find({ UserID: userId });
     if (!userProfile.length) {
       await createProfile(interaction.user);
 
@@ -57,7 +57,7 @@ module.exports = {
 
       await Profile.updateOne(
         { UserID: userId },
-        { $inc: { Wallet: 25 } }
+        { $inc: { Wallet: dailyReward } }
       );
 
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
@@ -69,16 +69,16 @@ module.exports = {
 
       await giveXPToUser(interaction.user, 5);
     } else {
-      const lastDaily = new Date(userProfile[0].lastDaily);
+      var lastDaily = new Date(userProfile[0].lastDaily);
 
-      const timeLeftTillNextDaily = Math.round(
+      var timeLeftTillNextDaily = Math.round(
         (lastDaily.getTime() + 86400000 - Date.now()) / 1000
       );
-      const timeLeftInHours = Math.floor(timeLeftTillNextDaily / 3600);
-      const timeLeftInMinutes = Math.floor(
+      var timeLeftInHours = Math.floor(timeLeftTillNextDaily / 3600);
+      var timeLeftInMinutes = Math.floor(
         (timeLeftTillNextDaily - timeLeftInHours * 3600) / 60
       );
-      const timeLeftInSeconds =
+      var timeLeftInSeconds =
         timeLeftTillNextDaily - timeLeftInHours * 3600 - timeLeftInMinutes * 60;
 
       dailyRewardEmbed = await getCustomColorAnswerEmbed(

@@ -50,8 +50,8 @@ module.exports = {
             });
         }
 
-        const user = interaction.user;
-        const userProfile = await Profile.find({
+        var user = interaction.user;
+        var userProfile = await Profile.find({
             UserID: user.id,
         });
 
@@ -109,12 +109,12 @@ module.exports = {
 
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            let slotTop1 = items[Math.floor(Math.random() * items.length)];
-            let slotTop2 = items[Math.floor(Math.random() * items.length)];
-            let slotTop3 = items[Math.floor(Math.random() * items.length)];
+            var slotTop1 = items[Math.floor(Math.random() * items.length)];
+            var slotTop2 = items[Math.floor(Math.random() * items.length)];
+            var slotTop3 = items[Math.floor(Math.random() * items.length)];
 
-            let results = [slotTop1, slotTop2, slotTop3];
-            let result = 0;
+            var results = [slotTop1, slotTop2, slotTop3];
+            var result = 0;
             results.forEach((slot) => {
                 (result += slot.mult);
             });

@@ -15,7 +15,7 @@ module.exports = {
 	async execute(interaction) {
 		var choosenRecipe = interaction.options.getString("recipe");
 
-		const minecraftRecipe = await MinecraftRecipe.find({ Name: { $regex: new RegExp(choosenRecipe, 'i') } });
+		var minecraftRecipe = await MinecraftRecipe.find({ Name: { $regex: new RegExp(choosenRecipe, 'i') } });
 		if (!minecraftRecipe[0]) {
 			var recipeNameNotValidEmbed = await getDefaultNegativeAnswerEmbed(
                 ":x: Recipe not found",

@@ -1,10 +1,9 @@
 const { SlashCommandBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
-const { createProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
 
 const {
     getCustomColorAnswerEmbed,
-    getDefaultNeutralAnswerEmbed,
     getDefaultWinEmbed,
     getDefaultLoseEmbed,
     getDefaultNegativeAnswerEmbed
@@ -34,38 +33,18 @@ module.exports = {
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
-        var user = interaction.user;
-
-        if (isNaN(bet) && bet !== "a") {
-            var betNotValid = await getDefaultNegativeAnswerEmbed(
-                ":x: Bet not valid",
-                `Please enter a valid bet`
-            );
-
-            return await interaction.reply({
-                embeds: [betNotValid],
-            });
+        var userExists = await checkForUserProfile(interaction);
+        if (!userExists) {
+            return;
         }
 
-        var userProfile = await Profile.find({
-            UserID: user.id,
-        });
+        await checkIfBetIsValid(bet, interaction);
+        if (!isBetValid) return;
 
-        if (!userProfile.length) {
-            await createProfile(interaction.user);
+        var userProfile = await getUserProfile(interaction);
 
-            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-                "Profile not found",
-                `Creating new profile...`
-            );
-
-            return await interaction.reply({
-                embeds: [profileNotFoundEmbed],
-            });
-        }
-
-        if (bet === "a" && userProfile[0].Wallet > 0) {
-            bet = userProfile[0].Wallet;
+        if (bet === "a" && userProfile.Wallet > 0) {
+            bet = userProfile.Wallet;
         }
         
         var flip = Math.floor(Math.random() * 2);
@@ -78,46 +57,50 @@ module.exports = {
             interaction.user
         );
 
-        if (bet <= userProfile[0].Wallet) {
-            if (prediction === result) {
-                await Profile.updateOne(
-                    { UserID: interaction.user.id },
-                    { $inc: { Wallet: bet } }
-                );
-
-                coinflipEmbed = await getDefaultWinEmbed(
-                    "Coin Flip",
-                    bet,
-                    `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
-                    bet,
-                    userProfile[0].Wallet,
-                    interaction.user
-                );
-                await giveXPToUser(interaction.user, 10);
-            } else {
-                await Profile.updateOne(
-                    { UserID: interaction.user.id },
-                    { $inc: { Wallet: -bet } }
-                );
-
-                coinflipEmbed = await getDefaultLoseEmbed(
-                    "Coin Flip",
-                    bet,
-                    `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
-                    bet,
-                    userProfile[0].Wallet,
-                    interaction.user
-                );
-
-                await giveXPToUser(interaction.user, 5);
-            }
-        } else {
-            coinflipEmbed = await getCustomColorAnswerEmbed(
+        if (bet > userProfile.Wallet) {
+            var notEnoughCoinsEmbed = await getCustomColorAnswerEmbed(
                 "Coin Flip",
-                `You dont have enough money!`,
+                `You dont have enough :coin:`,
                 "Red",
                 interaction.user
             );
+
+            return await interaction.reply({
+                embeds: [notEnoughCoinsEmbed],
+            });
+        }
+
+        if (prediction === result) {
+            await Profile.updateOne(
+                { UserID: interaction.user.id },
+                { $inc: { Wallet: bet } }
+            );
+
+            coinflipEmbed = await getDefaultWinEmbed(
+                "Coin Flip",
+                bet,
+                `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
+                bet,
+                userProfile.Wallet,
+                interaction.user
+            );
+            await giveXPToUser(interaction.user, 10);
+        } else {
+            await Profile.updateOne(
+                { UserID: interaction.user.id },
+                { $inc: { Wallet: -bet } }
+            );
+
+            coinflipEmbed = await getDefaultLoseEmbed(
+                "Coin Flip",
+                bet,
+                `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
+                bet,
+                userProfile.Wallet,
+                interaction.user
+            );
+
+            await giveXPToUser(interaction.user, 5);
         }
 
         await interaction.reply({
@@ -125,3 +108,16 @@ module.exports = {
         });
     },
 };
+
+async function checkIfBetIsValid(bet, interaction) {
+    if (isNaN(bet) && bet !== "a") {
+        var betIsNotValid = await getDefaultNegativeAnswerEmbed(
+            ":x: Bet not valid",
+            `Please enter a valid bet`
+        );
+
+        return await interaction.reply({
+            embeds: [betIsNotValid],
+        });
+    }
+}

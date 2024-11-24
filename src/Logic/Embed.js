@@ -78,9 +78,8 @@ module.exports = {
             .setTitle(`${user.username}`)
             .setThumbnail(`${user.displayAvatarURL()}`)
             .setDescription(
-                `**Level**: ${profile.Level}\n
-                **Current XP**: ${profile.CurrentXP} XP\n
-                **Wallet**: ${profile.Wallet}:coin:`)
+                `**Level**: ${profile.Level}\n **Current XP**: ${profile.CurrentXP} XP\n
+                **Wallet**: ${profile.Wallet} :coin:\n **Bank** ${profile.Bank} :coin:`)
             .setColor("LuminousVividPink")
     },
     getUserLevelUpEmbed: async function getUserLevelUpEmbed(user, profile) {

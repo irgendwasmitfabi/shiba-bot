@@ -50,7 +50,7 @@ async function scrapeMinecraftRecipes() {
 
         var recipeName2ImageUrl = {};
         recipeTables.each((tableIndex, table) => {
-            // Get all rows in the table except the first one
+            // Get all rows in the table except the table header
             var rows = $(table).find('tr:gt(0)');
             rows.each((rowIndex, row) => {
 
@@ -66,3 +66,4 @@ async function scrapeMinecraftRecipes() {
         console.error('Error fetching or processing tables:', error.message);
     }
 }
+ 

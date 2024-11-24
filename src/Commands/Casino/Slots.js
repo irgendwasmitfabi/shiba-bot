@@ -1,13 +1,12 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { createProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkIfBetIsValid } = require('../../Logic/CasinoUtils');
 const Profile = require("../../Models/Profile");
 const {
     getCustomColorAnswerEmbed,
-    getDefaultNeutralAnswerEmbed,
     getDefaultWinEmbed,
     getDefaultLoseEmbed,
     getDefaultDrawEmbed,
-    getDefaultNegativeAnswerEmbed,
     getSlotsIdleEmbed
 } = require("../../Logic/Embed");
 
@@ -22,41 +21,22 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        const minimumBet = 10;
+
+        var userExists = await checkForUserProfile(interaction);
+        if (!userExists) {
+            return;
+        }
+
+        var userProfile = await getUserProfile(interaction);
+
         var bet = interaction.options.getString("bet");
-        
-        if (bet !== "a") {
-            bet = parseInt(bet, 10);
 
-            if (isNaN(bet) || !Number.isInteger(bet)) {
-                var betNotValid = await getDefaultNegativeAnswerEmbed(
-                    ":x: Bet not valid",
-                    `Please enter a valid bet`
-                );
-    
-                return await interaction.reply({
-                    embeds: [betNotValid],
-                });
-            }
-        }
+        var isBetValid = await checkIfBetIsValid(interaction, bet, minimumBet);
+        if (!isBetValid) return;
 
-        if (bet < 10 ) {
-            var betNotValid = await getDefaultNegativeAnswerEmbed(
-                ":x: Bet not valid",
-                `The minimum bet for this game is 100!`
-            );
-
-            return await interaction.reply({
-                embeds: [betNotValid],
-            });
-        }
-
-        var user = interaction.user;
-        var userProfile = await Profile.find({
-            UserID: user.id,
-        });
-
-        if (bet === "a" && userProfile[0].Wallet > 0) {
-            bet = userProfile[0].Wallet;
+        if (bet === "a" && userProfile.Wallet > 0) {
+            bet = userProfile.Wallet;
         }
 
         var slotsEmbed = await getCustomColorAnswerEmbed(
@@ -66,38 +46,12 @@ module.exports = {
             interaction.user
         );
 
-        if (!userProfile.length) {
-            await createProfile(interaction.user);
-
-            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-                "Profile not found",
-                `Creating new profile...`
-            );
-
-            return await interaction.reply({
-                embeds: [profileNotFoundEmbed],
-            });
-        } else if (bet <= userProfile[0].Wallet) {
+        if (bet <= userProfile.Wallet) {
             const items = [
-                { name: "<:cherry:1199828030634348646>", value: 1, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 2, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 3, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
-                { name: "<:cherry:1199828030634348646>", value: 4, mult: 0.1 },
-                { name: "<:blueFruit:1199828063425409115>", value: 5, mult: 0 },
-                { name: "<:blueFruit:1199828063425409115>", value: 6, mult: 0 },
-                { name: "<:blueFruit:1199828063425409115>", value: 7, mult: 0 },
-                { name: "<:blueFruit:1199828063425409115>", value: 8, mult: 0 },
-                { name: "<:blueFruit:1199828063425409115>", value: 8, mult: 0 },
-                { name: "<:purpleFruit:1199828169742618675>", value: 9, mult: 0.5 },
-                { name: "<:purpleFruit:1199828169742618675>", value: 10, mult: 0.5 },
-                { name: "<:purpleFruit:1199828169742618675>", value: 11, mult: 0.5 },
-                { name: "<:purpleFruit:1199828169742618675>", value: 11, mult: 0.5 },
-                { name: "<:starFruit:1199828135047344138>", value: 12, mult: 1 },
-                { name: "<:starFruit:1199828135047344138>", value: 13, mult: 1 },
-                { name: "<:starFruit:1199828135047344138>", value: 13, mult: 1 },
+                { name: "<:cherry:1199828030634348646>", mult: 0.1, weight: 40 },
+                { name: "<:blueFruit:1199828063425409115>", mult: 0, weight: 30 },
+                { name: "<:purpleFruit:1199828169742618675>", mult: 0.5, weight: 20 },
+                { name: "<:starFruit:1199828135047344138>", mult: 1, weight: 10 },
             ];
 
             var animatedSlotsEmbed = await getSlotsIdleEmbed(
@@ -109,9 +63,9 @@ module.exports = {
 
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            var slotTop1 = items[Math.floor(Math.random() * items.length)];
-            var slotTop2 = items[Math.floor(Math.random() * items.length)];
-            var slotTop3 = items[Math.floor(Math.random() * items.length)];
+            var slotTop1 = getRandomItem(items);
+            var slotTop2 = getRandomItem(items);
+            var slotTop3 = getRandomItem(items);
 
             var results = [slotTop1, slotTop2, slotTop3];
             var result = 0;
@@ -123,71 +77,27 @@ module.exports = {
 
             win = bet * multiplier;
             
-            win = Math.round(win * 100) / 100;
-            win = parseInt(win, 10);
+            win = parseInt((Math.round(win * 100) / 100), 10);
             bet = Math.round(bet * 100) / 100;
 
             if (win > bet) {
-                await Profile.updateOne(
-                    { UserID: interaction.user.id },
-                    { $inc: { Wallet: -bet } }
-                );
-                await Profile.updateOne(
-                    { UserID: interaction.user.id },
-                    { $inc: { Wallet: win } }
-                  );
-
-                slotsEmbed = await getDefaultWinEmbed(
-                    "Slots",
-                    bet,
-                    `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
-                    Multiplier: ${multiplier}`,
-                    win - bet,
-                    userProfile[0].Wallet,
-                    interaction.user
-                );
-
+                await updateWallet(interaction.user.id, -bet);
+                await updateWallet(interaction.user.id, win);
+            
+                slotsEmbed = await getSlotsEmbed("win", bet, `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}`, multiplier, win, userProfile.Wallet, interaction.user);
                 await giveXPToUser(interaction.user, 10);
-            } else if(multiplier == 1) {
-                slotsEmbed = await getDefaultDrawEmbed(
-                    "Slots",
-                    bet,
-                    `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
-                    Multiplier: ${multiplier}`,
-                    userProfile[0].Wallet,
-                    interaction.user
-                );
-
+            } else if (multiplier == 1) {
+                slotsEmbed = await getSlotsEmbed("draw", bet, `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}`, multiplier, 0, userProfile.Wallet, interaction.user);
                 await giveXPToUser(interaction.user, 5);
-            } else if(multiplier < 1) {
-                await Profile.updateOne(
-                    { UserID: interaction.user.id },
-                    { $inc: { Wallet: win-bet } }
-                  );
-
-                slotsEmbed = await getDefaultLoseEmbed(
-                    "Slots",
-                    bet,
-                    `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}\n
-                    Multiplier: ${multiplier}`,
-                    bet - win,
-                    userProfile[0].Wallet,
-                    interaction.user
-                );
-
+            } else if (multiplier < 1) {
+                await updateWallet(interaction.user.id, win - bet);
+            
+                slotsEmbed = await getSlotsEmbed("lose", bet, `${slotTop1.name} ${slotTop2.name} ${slotTop3.name}`, multiplier, win, userProfile.Wallet, interaction.user);
                 await giveXPToUser(interaction.user, 5);
+            } else {
+                slotsEmbed = await getCustomColorAnswerEmbed("Slots", "You don't have enough :coin:!", "Red", interaction.user);
+                return await interaction.reply({ embeds: [slotsEmbed] });
             }
-        } else {
-            slotsEmbed = await getCustomColorAnswerEmbed(
-                "Slots",
-                `You dont have enough money!`,
-                "Red",
-                interaction.user
-            );
-
-            return await interaction.reply({
-                embeds: [slotsEmbed],
-            });
         }
 
         await interaction.editReply({
@@ -195,3 +105,39 @@ module.exports = {
         });
     },
 };
+
+function getRandomItem(items) {
+    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+    let randomWeight = Math.random() * totalWeight;
+
+    for (const item of items) {
+        if (randomWeight < item.weight) {
+            return item;
+        }
+        randomWeight -= item.weight;
+    }
+}
+
+async function updateWallet(userId, amount) {
+    await Profile.updateOne(
+        { UserID: userId },
+        { $inc: { Wallet: amount } }
+    );
+}
+
+async function getSlotsEmbed(type, bet, slotNames, multiplier, win, userWallet, user) {
+    var message = `${slotNames}\nMultiplier: ${multiplier}`;
+    var wonAmount = win - bet;
+    var lostAmount = bet - win;
+
+    switch (type) {
+        case "win":
+            return await getDefaultWinEmbed("Slots", bet, message, wonAmount, userWallet, user);
+        case "draw":
+            return await getDefaultDrawEmbed("Slots", bet, message, userWallet, user);
+        case "lose":
+            return await getDefaultLoseEmbed("Slots", bet, message, lostAmount, userWallet, user);
+        default:
+            throw new Error("Unknown slot type");
+    }
+}

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
-const { createProfile, giveXPToUser } = require('../../Logic/Utils');
-const { getThreePieceRow } = require('../../Logic/ScratchCard/ButtonHandler');
+const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkIfBetIsValid, getThreePieceRow } = require('../../Logic/CasinoUtils');
 const { ComponentType } = require('discord.js');
 const ApeWinPool = require('../../Data/Scratchcard/ApeWinPool.json');
 const DinoWinPool = require('../../Data/Scratchcard/DinoWinPool.json');
@@ -28,6 +28,11 @@ module.exports = {
                 )
         ),
     async execute(interaction) {
+        var userExists = await checkForUserProfile(interaction);
+        if (!userExists) {
+            return;
+        }
+
         var scratchCardOption = interaction.options.getString("options");
 
         var winPool;
@@ -42,60 +47,27 @@ module.exports = {
                 winPool = DinoWinPool.winnings;
                 break;
             default:
-                //Handle case?
                 break;
         }
 
-        // TODO: Move to handler!
-        if (isNaN(bet) && bet !== "a") {
-            var betNotValid = await getDefaultNegativeAnswerEmbed(
-                ":x: Bet not valid",
-                `Please enter a valid bet`
-            );
+        var isBetValid = await checkIfBetIsValid(interaction, bet);
+        if (!isBetValid) return;
 
-            return await interaction.reply({
-                embeds: [betNotValid],
-            });
-        }
-
-        //TODO: Move to handler!
-        var user = interaction.user;
-        var userProfile = await Profile.find({
-            UserID: user.id,
-        });
-
-        if (!userProfile.length) {
-            await createProfile(interaction.user);
-
-            var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-                "Profile not found",
-                `Creating new profile...`
-            );
-
-            return await interaction.reply({
-                embeds: [profileNotFoundEmbed],
-            });
-        }
+        var userProfile = await getUserProfile(interaction);
 
         var scratchCardEmbed = await getScratchCardEmbed(
-            "ScratchCard: " + scratchCardOption,
+            "ScratchCard: " + scratchCardOption, //TODO: get name instead of value?
             "Gold"
         );
 
-        // Set bet to all in
-        if (bet === "a" && userProfile[0].Wallet > 0) {
-            bet = userProfile[0].Wallet;
+        if (bet === "a" && userProfile.Wallet > 0) {
+            bet = userProfile.Wallet;
         }
 
-        if (bet <= userProfile[0].Wallet) {
-            await Profile.updateOne(
-                { UserID: interaction.user.id },
-                { $inc: { Wallet: -bet } }
-            );
-        } else {
+        if (bet > userProfile.Wallet) {
             scratchCardEmbed = await getCustomColorAnswerEmbed(
                 "ScratchCard",
-                `You dont have enough money!`,
+                `You dont have enough :coin:!`,
                 "Red",
                 interaction.user
             );
@@ -105,62 +77,65 @@ module.exports = {
             });
         }
 
-        var buttons = await getThreePieceRow( "1", scratchCardOption);
-        var buttons1 = await getThreePieceRow("2", scratchCardOption);
-        var buttons2 = await getThreePieceRow("3", scratchCardOption);
+        await Profile.updateOne(
+            { UserID: interaction.user.id },
+            { $inc: { Wallet: -bet } }
+        );
 
-        var allButtonsArray = buttons.concat(buttons1, buttons2);
+        var buttonRow01 = await getThreePieceRow( "1", scratchCardOption);
+        var buttonRow02 = await getThreePieceRow("2", scratchCardOption);
+        var buttonRow03 = await getThreePieceRow("3", scratchCardOption);
 
-        testRow = new ActionRowBuilder()
-            .addComponents(buttons);
-        testRow1 = new ActionRowBuilder()
-            .addComponents(buttons1);
-        testRow2 = new ActionRowBuilder()
-            .addComponents(buttons2);
+        var combinedButtonRows = [...buttonRow01, ...buttonRow02, ...buttonRow03];
 
-        //Testing
+        var rowComponent01 = new ActionRowBuilder()
+            .addComponents(buttonRow01);
+        var rowComponent02 = new ActionRowBuilder()
+            .addComponents(buttonRow02);
+        var rowComponent03 = new ActionRowBuilder()
+            .addComponents(buttonRow03);
+
         var message = await interaction.reply({
             embeds: [scratchCardEmbed],
-            components: [testRow, testRow1, testRow2],
+            components: [rowComponent01, rowComponent02, rowComponent03],
         });
 
-        var values = [];
-        allButtonsArray.forEach(button => {
-            var selectedPoolNumber = getSelectedPoolNumber(values, winPool);
+        var selectedPoolNumbers = [];
+        combinedButtonRows.forEach(() => {
+            var selectedPoolNumber = getSelectedPoolNumber(selectedPoolNumbers, winPool);
 
-            values.push(selectedPoolNumber);
+            selectedPoolNumbers.push(selectedPoolNumber);
         });
-        console.log(values);
+        console.log(selectedPoolNumbers); //TODO: Remove
 
-        var allButtonsArrayLength = allButtonsArray.length;
         var clickedButtonsCount = 0;
 
         var collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 100_000 });
         collector.on('collect', buttonInteraction => {
-            if (buttonInteraction.user.id === interaction.user.id) {
-                var buttonCustomId = buttonInteraction.customId;
-                var buttonIndex = getButtonIndex(buttonCustomId);
+            if (buttonInteraction.user.id !== interaction.user.id) {
+                return buttonInteraction.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+            }
 
-                var clickedButton = allButtonsArray[buttonIndex];
+            var buttonCustomId = buttonInteraction.customId;
+            var buttonIndex = getButtonIndex(buttonCustomId);
 
-                clickedButton
-                    .setLabel(`${values[buttonIndex]}`)
-                    .setDisabled(true);
-                
-                interaction.editReply({
-                    embeds: [scratchCardEmbed],
-                    components: [testRow, testRow1, testRow2],
-                });
+            var clickedButton = combinedButtonRows[buttonIndex];
 
-                clickedButtonsCount++;
-                if (clickedButtonsCount === allButtonsArrayLength) {
-                    checkForWin(values, 3, interaction);
-                    buttonInteraction.reply({ content: `Game Finished`, ephemeral: true });
-                } else {
-                    buttonInteraction.deferUpdate();
-                }
+            clickedButton
+                .setLabel(`${selectedPoolNumbers[buttonIndex]}`)
+                .setDisabled(true);
+            
+            interaction.editReply({
+                embeds: [scratchCardEmbed],
+                components: [rowComponent01, rowComponent02, rowComponent03],
+            });
+
+            clickedButtonsCount++;
+            if (clickedButtonsCount === combinedButtonRows.length) {
+                checkForWin(selectedPoolNumbers, 3, interaction);
+                buttonInteraction.reply({ content: `Game Finished`, ephemeral: true });
             } else {
-                buttonInteraction.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+                buttonInteraction.deferUpdate();
             }
         });
         
@@ -206,11 +181,10 @@ function getButtonIndex(buttonCustomId) {
 }
 
 function getRandomValue(winPool) {
-    var rand = Math.random();
     var cumulativeProbability = 0;
     for (var i = 0; i < winPool.length; i++) {
         cumulativeProbability += winPool[i].probability;
-        if (rand < cumulativeProbability) {
+        if (Math.random() < cumulativeProbability) {
             return winPool[i].value;
         }
     }

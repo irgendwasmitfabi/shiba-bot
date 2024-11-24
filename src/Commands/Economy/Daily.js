@@ -1,6 +1,6 @@
 const Profile = require("../../Models/Profile");
-const { createProfile, giveXPToUser } = require('../../Logic/Utils');
-const { getCustomColorAnswerEmbed, getDefaultNeutralAnswerEmbed } = require("../../Logic/Embed");
+const { checkForUserProfile, giveXPToUser, getUserProfile } = require('../../Logic/Utils');
+const { getCustomColorAnswerEmbed } = require("../../Logic/Embed");
 const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
@@ -9,54 +9,32 @@ module.exports = {
     .setDescription("Get your daily award"),
   async execute(interaction) {
     const dailyReward = process.env.dailyReward;
-    const userId = interaction.user.id;
+    const user = interaction.user;
+
+    const millisecondsInADay = 86400000;
 
     var dailyRewardEmbed = await getCustomColorAnswerEmbed(
       "Daily Reward",
-      `You could not claim youre daily reward`,
+      `You could not claim your daily reward`,
       "Orange",
-      interaction.user
+      user
     );
     
-    var userProfile = await Profile.find({ UserID: userId });
-    if (!userProfile.length) {
-      await createProfile(interaction.user);
+    var userExists = await checkForUserProfile(interaction);
+    if (!userExists) {
+        return;
+    }
 
-      var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-        "Profile not found",
-        `Creating new profile...`
-      );
+    var userProfile = await getUserProfile(interaction);
 
-      return await interaction.reply({
-        embeds: [profileNotFoundEmbed],
-      });
-    } else if (userProfile[0].lastDaily === "undefined") {
+    if (userProfile.LastDaily === "undefined" || Date.now() - userProfile.LastDaily > millisecondsInADay) {
       await Profile.updateOne(
-        { UserID: userId },
-        { $set: { lastDaily: Date.now() } }
+        { UserID: user.id },
+        { $set: { LastDaily: Date.now() } }
       );
 
       await Profile.updateOne(
-        { UserID: userId },
-        { $inc: { Wallet: dailyReward } }
-      );
-
-      dailyRewardEmbed = await getCustomColorAnswerEmbed(
-        "Daily Reward",
-        `You have collected today's reward ${dailyReward}:coin:.\nCome back tomorrow to collect more.`,
-        "Green",
-        interaction.user
-      );
-
-      await giveXPToUser(interaction.user, 5);
-    } else if (Date.now() - userProfile[0].lastDaily > 86400000) {
-      await Profile.updateOne(
-        { UserID: userId },
-        { $set: { lastDaily: Date.now() } }
-      );
-
-      await Profile.updateOne(
-        { UserID: userId },
+        { UserID: user.id },
         { $inc: { Wallet: dailyReward } }
       );
 
@@ -64,28 +42,26 @@ module.exports = {
         "Daily Reward",
         `You have collected today's reward ${dailyReward}:coin:`,
         "Green",
-        interaction.user
+        user
       );
 
-      await giveXPToUser(interaction.user, 5);
+      await giveXPToUser(user, 5);
     } else {
-      var lastDaily = new Date(userProfile[0].lastDaily);
+      var lastDaily = new Date(userProfile.LastDaily);
 
-      var timeLeftTillNextDaily = Math.round(
-        (lastDaily.getTime() + 86400000 - Date.now()) / 1000
-      );
-      var timeLeftInHours = Math.floor(timeLeftTillNextDaily / 3600);
-      var timeLeftInMinutes = Math.floor(
-        (timeLeftTillNextDaily - timeLeftInHours * 3600) / 60
-      );
-      var timeLeftInSeconds =
-        timeLeftTillNextDaily - timeLeftInHours * 3600 - timeLeftInMinutes * 60;
+      const secondsInAnHour = 3600;
+      const secondsInAMinute = 60;
+      
+      var timeLeftTillNextDaily = Math.max(0, Math.round((lastDaily.getTime() + millisecondsInADay - Date.now()) / 1000));
+      var timeLeftInHours = Math.floor(timeLeftTillNextDaily / secondsInAnHour);
+      var timeLeftInMinutes = Math.floor((timeLeftTillNextDaily % secondsInAnHour) / secondsInAMinute);
+      var timeLeftInSeconds = timeLeftTillNextDaily % secondsInAMinute;
 
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
         `You have to wait ${timeLeftInHours}h ${timeLeftInMinutes}m ${timeLeftInSeconds}s before you can collect your daily reward.`,
         "Orange",
-        interaction.user
+        user
       );
     }
 

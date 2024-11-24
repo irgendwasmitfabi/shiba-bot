@@ -11,16 +11,17 @@ const {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("coinflip")
-        .setDescription("Flip a coin!")
+        .setName("sevens")
+        .setDescription("Play a game of sevens")
         .addStringOption((option) =>
             option
                 .setName("prediction")
                 .setDescription("Choose the side you think the coin will land")
                 .setRequired(true)
                 .addChoices(
-                    { name: "Heads", value: "heads" },
-                    { name: "Tails", value: "tails" }
+                    { name: "High", value: "high" },
+                    { name: "7", value: "7" },
+                    { name: "Low", value: "low" }
                 )
         )
         .addStringOption((option) =>
@@ -30,6 +31,8 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        const sevenMultiplier = 10;
+
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
@@ -47,20 +50,19 @@ module.exports = {
             bet = userProfile.Wallet;
         }
         
-        var flip = Math.floor(Math.random() * 2);
-        var result = flip == 0 ? "heads" : "tails";
+        var rolledNumber = Math.floor(Math.random() * 12) + 1;
 
-        var coinflipEmbed = await getCustomColorAnswerEmbed(
-            "Coin Flip",
-            `You could not flip a coin`,
+        var sevensEmbed = await getCustomColorAnswerEmbed(
+            "Sevens",
+            `You could not play`,
             "Orange",
             interaction.user
         );
 
         if (bet > userProfile.Wallet) {
             var notEnoughCoinsEmbed = await getCustomColorAnswerEmbed(
-                "Coin Flip",
-                `You dont have enough :coin:`,
+                "Sevens",
+                `You don't have enough :coin:`,
                 "Red",
                 interaction.user
             );
@@ -70,20 +72,30 @@ module.exports = {
             });
         }
 
+        var result = rolledNumber < 7 ? "low" : rolledNumber > 7 ? "high" : "7";
+
         if (prediction === result) {
+            var win = bet;
+
+            if (result === "7") {
+                win = bet * sevenMultiplier;
+            }
+
             await Profile.updateOne(
                 { UserID: interaction.user.id },
-                { $inc: { Wallet: bet } }
+                { $inc: { Wallet: win } }
             );
 
-            coinflipEmbed = await getDefaultWinEmbed(
-                "Coin Flip",
+            sevensEmbed = await getDefaultWinEmbed(
+                "Sevens",
                 bet,
-                `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
-                bet,
+                `**Your bet:** \n${prediction}\n
+                **Ball landed on:**\n${rolledNumber}`,
+                win,
                 userProfile.Wallet,
                 interaction.user
             );
+
             await giveXPToUser(interaction.user, 10);
         } else {
             await Profile.updateOne(
@@ -91,10 +103,11 @@ module.exports = {
                 { $inc: { Wallet: -bet } }
             );
 
-            coinflipEmbed = await getDefaultLoseEmbed(
-                "Coin Flip",
+            sevensEmbed = await getDefaultLoseEmbed(
+                "**Sevens**",
                 bet,
-                `You bet on: \n${prediction}\nCoin landed on: \n${result}`,
+                `**Your bet:** \n${prediction}\n
+                **Ball landed on:**\n${rolledNumber}`,
                 bet,
                 userProfile.Wallet,
                 interaction.user
@@ -104,7 +117,7 @@ module.exports = {
         }
 
         await interaction.reply({
-            embeds: [coinflipEmbed],
+            embeds: [sevensEmbed],
         });
     },
 };

@@ -19,7 +19,8 @@ module.exports = {
 		if (!minecraftRecipe[0]) {
 			var recipeNameNotValidEmbed = await getDefaultNegativeAnswerEmbed(
                 ":x: Recipe not found",
-                `The Recipe could not be found`
+                `The Recipe could not be found`,
+				interaction.user
             );
 
             return await interaction.reply({

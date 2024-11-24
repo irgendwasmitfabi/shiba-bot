@@ -7,8 +7,6 @@ const ApeWinPool = require('../../Data/Scratchcard/ApeWinPool.json');
 const DinoWinPool = require('../../Data/Scratchcard/DinoWinPool.json');
 
 const {
-    getDefaultNeutralAnswerEmbed,
-    getDefaultNegativeAnswerEmbed,
     getCustomColorAnswerEmbed,
     getScratchCardEmbed
 } = require("../../Logic/Embed");
@@ -56,8 +54,9 @@ module.exports = {
         var userProfile = await getUserProfile(interaction);
 
         var scratchCardEmbed = await getScratchCardEmbed(
-            "ScratchCard: " + scratchCardOption, //TODO: get name instead of value?
-            "Gold"
+            "ScratchCard: " + scratchCardOption,
+            "Gold",
+            interaction.user
         );
 
         if (bet === "a" && userProfile.Wallet > 0) {
@@ -223,18 +222,21 @@ async function checkForWin(values, amountToWin, interaction) {
 
         scratchCardEmbed = await getScratchCardEmbed(
             `You won ${winnings}:coin:!`,
-            "Green"
+            "Green",
+            interaction.user
         );
 
         if (results !== 0) {
             scratchCardEmbed = await getScratchCardEmbed(
                 `You won ${winnings}:coin:!`,
-                "Green"
+                "Green",
+                interaction.user
             );
         } else {
             scratchCardEmbed = await getScratchCardEmbed(
                 `You lost!`,
-                "Red"
+                "Red",
+                interaction.user
             );
         }
 
@@ -249,7 +251,8 @@ async function checkForWin(values, amountToWin, interaction) {
     } else {
         var scratchCardEmbed = await getScratchCardEmbed(
             `You didn't win anything!`,
-            "Red"
+            "Red",
+            interaction.user
         );
 
         await interaction.editReply({

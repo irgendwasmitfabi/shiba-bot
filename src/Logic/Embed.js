@@ -13,11 +13,12 @@ module.exports = {
             .setDescription(description)
             .setColor("Green")
     },
-    getDefaultNegativeAnswerEmbed: async function getDefaultNegativeAnswerEmbed(title, description) {
+    getDefaultNegativeAnswerEmbed: async function getDefaultNegativeAnswerEmbed(title, description, user) {
         return new EmbedBuilder()
             .setTitle(title)
             .setDescription(description)
             .setColor("Red")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
     getCustomColorAnswerEmbed: async function getCustomColorAnswerEmbed(title, description, color, user) {
         return new EmbedBuilder()
@@ -90,10 +91,12 @@ module.exports = {
                 **Current XP**: ${profile.CurrentXP}XP of ${profile.XPForNextLevel}XP\n
                 You got ${profile.Level * 100}:coin:`)
             .setColor("LuminousVividPink")
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
-    getScratchCardEmbed: async function getScratchCardEmbed(title, color) {
+    getScratchCardEmbed: async function getScratchCardEmbed(title, color, user) {
         return new EmbedBuilder()
             .setTitle(`${title}`)
-            .setColor(color);
+            .setColor(color)
+            .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
 };

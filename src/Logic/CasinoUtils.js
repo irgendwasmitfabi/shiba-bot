@@ -7,7 +7,8 @@ module.exports = {
             if (isNaN(bet) && bet !== "a") {
                 var betIsNotValid = await getDefaultNegativeAnswerEmbed(
                     ":x: Your bet is not valid",
-                    `Please enter a valid bet`
+                    `Please enter a valid bet`,
+                    interaction.user
                 );
 
                 await interaction.reply({
@@ -20,7 +21,8 @@ module.exports = {
             if (minimumBet && minimumBet > bet) {
                 var betIsNotValid = await getDefaultNegativeAnswerEmbed(
                     ":x: Your bet is not valid",
-                    `The minimum bet for this game is ${minimumBet}!`
+                    `The minimum bet for this game is ${minimumBet}!`,
+                    interaction.user
                 );
 
                 await interaction.reply({

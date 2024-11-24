@@ -56,7 +56,8 @@ async function depositCoins(interaction, amount) {
     if (userProfile.Wallet < amount) {
         return await getDefaultNegativeAnswerEmbed(
             "Bank",
-            `You don't have enough :coin: in your wallet!`
+            `You don't have enough :coin: in your wallet!`,
+            interaction.user
         );
     }
 
@@ -82,7 +83,8 @@ async function withdrawCoins(interaction, amount) {
     if (userProfile.Bank < amount) {
         return await getDefaultNegativeAnswerEmbed(
             "Bank",
-            `You don't have enough :coin: in your bank account!`
+            `You don't have enough :coin: in your bank account!`,
+            interaction.user
         );
     }
 

@@ -1,0 +1,43 @@
+[
+    {
+      "Id": 1,
+      "Name": "Bard",
+      "Charisma": 16,
+      "Strength": 8,
+      "Dexterity": 12,
+      "Stealth": 14
+    },
+    {
+      "Id": 2,
+      "Name": "Barbarian",
+      "Charisma": 10,
+      "Strength": 18,
+      "Dexterity": 10,
+      "Stealth": 12
+    },
+    {
+      "Id": 3,
+      "Name": "Rogue",
+      "Charisma": 12,
+      "Strength": 10,
+      "Dexterity": 14,
+      "Stealth": 14
+    },
+    {
+      "Id": 4,
+      "Name": "Paladin",
+      "Charisma": 14,
+      "Strength": 14,
+      "Dexterity": 8,
+      "Stealth": 14
+    },
+    {
+      "Id": 5,
+      "Name": "Monk",
+      "Charisma": 10,
+      "Strength": 10,
+      "Dexterity": 16,
+      "Stealth": 14
+    }
+  ]
+  

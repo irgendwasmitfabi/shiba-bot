@@ -105,7 +105,6 @@ module.exports = {
 
             selectedPoolNumbers.push(selectedPoolNumber);
         });
-        console.log(selectedPoolNumbers); //TODO: Remove
 
         var clickedButtonsCount = 0;
 
@@ -139,7 +138,6 @@ module.exports = {
         });
         
         collector.on('end', collected => {
-            console.log(collected);
             if (collected.length >= 9) {
                 interaction.deleteReply();
             }
@@ -196,7 +194,6 @@ function getSelectedPoolNumber(values, winPool) {
     var result = checkForThreeSameNumbers(values, 3);
 
     var alreadyThreeSameNumbers = result != null && Array.isArray(result) && result.includes(selectedPoolNumber);
-    console.log(alreadyThreeSameNumbers);
 
     while (alreadyThreeSameNumbers) {
         selectedPoolNumber = getRandomValue(winPool);
@@ -217,7 +214,6 @@ async function checkForWin(values, amountToWin, interaction) {
 
         results.forEach(result => {
             winnings += result;
-            console.log(winnings);
         });
 
         scratchCardEmbed = await getScratchCardEmbed(

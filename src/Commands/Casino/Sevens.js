@@ -41,7 +41,7 @@ module.exports = {
             return;
         }
 
-        var isBetValid = await checkIfBetIsValid(bet, interaction);
+        var isBetValid = await checkIfBetIsValid(interaction, bet);
         if (!isBetValid) return;
 
         var userProfile = await getUserProfile(interaction);

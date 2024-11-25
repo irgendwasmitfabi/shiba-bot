@@ -26,6 +26,7 @@ module.exports = {
     }
 
     var userProfile = await getUserProfile(interaction);
+    var calculatedDailyReward = dailyReward * userProfile.Level;
 
     if (userProfile.LastDaily === "undefined" || Date.now() - userProfile.LastDaily > millisecondsInADay) {
       await Profile.updateOne(
@@ -35,12 +36,12 @@ module.exports = {
 
       await Profile.updateOne(
         { UserID: user.id },
-        { $inc: { Wallet: dailyReward } }
+        { $inc: { Wallet: calculatedDailyReward } }
       );
 
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
-        `You have collected today's reward ${dailyReward}:coin:`,
+        `You have collected today's reward ${calculatedDailyReward}:coin:`,
         "Green",
         user
       );

@@ -1,0 +1,39 @@
+[
+    {
+      "Id": 1,
+      "Name": "Sunflower",
+      "EmojiId": ":sunflower:",
+      "Value": 100
+    },
+    {
+      "Id": 2,
+      "Name": "Pineapple",
+      "EmojiId": ":pineapple:",
+      "Value": 5000
+    },
+    {
+      "Id": 3,
+      "Name": "Sword",
+      "EmojiId": ":crossed_swords:",
+      "Value": 50000
+    },
+    {
+      "Id": 4,
+      "Name": "Castle",
+      "EmojiId": ":european_castle:",
+      "Value": 250000
+    },
+    {
+      "Id": 5,
+      "Name": "Moon",
+      "EmojiId": ":new_moon:",
+      "Value": 500000
+    },
+    {
+      "Id": 6,
+      "Name": "Phoenix",
+      "EmojiId": ":phoenix:",
+      "Value": 1000000
+    }
+]
+  

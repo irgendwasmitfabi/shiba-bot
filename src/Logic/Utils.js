@@ -96,7 +96,9 @@ module.exports = {
   },
   getUserProfile: async function getUserProfile(interaction) {
     try {
-      return await Profile.findOne({UserID: interaction.user.id});
+      var user = interaction.options.getUser('target') || interaction.user;
+
+      return await Profile.findOne({UserID: user.id});
     } catch (error) {
       console.log(error);
     }

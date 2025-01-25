@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+
 module.exports = model(
   'Profile',
   new Schema({
@@ -10,5 +11,11 @@ module.exports = model(
     Username: String,
     Wallet: Number,
     XPForNextLevel: Number,
+    Trophies: [{ 
+      TrophyId: Number,
+      Name: String,
+      EmojiId: String,
+      Amount: Number
+    }]
   })
 );

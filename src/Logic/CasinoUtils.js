@@ -2,7 +2,7 @@ const { getDefaultNegativeAnswerEmbed } = require('./Embed');
 const { ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
-    checkIfBetIsValid: async function checkIfBetIsValid(interaction, bet, minimumBet) {
+    checkIfBetIsValid: async function checkIfBetIsValid(interaction, bet, minimumBet, userProfile) {
         try {
             if (isNaN(bet) && bet !== "a") {
                 var betIsNotValid = await getDefaultNegativeAnswerEmbed(
@@ -15,6 +15,20 @@ module.exports = {
                     embeds: [betIsNotValid],
                 });
 
+                return false;
+            }
+
+            if (userProfile && bet > userProfile.Wallet) {
+                var betIsNotValid = await getDefaultNegativeAnswerEmbed(
+                    ":x: Your bet is not valid",
+                    `You dont have enough :coin:`,
+                    interaction.user
+                );
+    
+                await interaction.reply({
+                    embeds: [betIsNotValid],
+                });
+                
                 return false;
             }
 

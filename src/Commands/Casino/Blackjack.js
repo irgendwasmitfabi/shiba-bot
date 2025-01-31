@@ -126,10 +126,10 @@ async function endGame(playerCards, interaction, dealerCards, bet, userProfile) 
 
     var playerBust = playerValueSum > 21;
     if (!playerBust) {
-        while (dealerSum < 16) {
+        while (dealerSum <= 16) {
             var newCard = getRandomCards(1, dealerCards)[0];
             dealerCards.push(newCard);
-            dealerSum = getCardsSum(playerCards);
+            dealerSum = getCardsSum(dealerCards);
         }
     } else {
         var newCard = getRandomCards(1, dealerCards)[0];

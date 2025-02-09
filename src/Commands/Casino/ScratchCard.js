@@ -109,7 +109,7 @@ module.exports = {
         var clickedButtonsCount = 0;
 
         var collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 100_000 });
-        collector.on('collect', buttonInteraction => {
+        collector.on('collect', async (buttonInteraction) => {
             if (buttonInteraction.user.id !== interaction.user.id) {
                 return buttonInteraction.reply({ content: `These buttons aren't for you!`, ephemeral: true });
             }
@@ -131,7 +131,7 @@ module.exports = {
             clickedButtonsCount++;
             if (clickedButtonsCount === combinedButtonRows.length) {
                 checkForWin(selectedPoolNumbers, 3, interaction);
-                buttonInteraction.reply({ content: `Game Finished`, ephemeral: true });
+                await buttonInteraction.deferUpdate();
             } else {
                 buttonInteraction.deferUpdate();
             }

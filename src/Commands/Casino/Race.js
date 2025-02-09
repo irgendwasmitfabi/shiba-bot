@@ -20,9 +20,9 @@ module.exports = {
                 .setDescription("Choose the race you want to bet on")
                 .setRequired(true)
                 .addChoices(
-                    { name: "Knuckles x3", value: "knuckles" },
-                    { name: "Shadow x5", value: "shadow" },
-                    { name: "Dr. Eggman x7", value: "eggman" }
+                    { name: "Turtle x3", value: "turtle" },
+                    { name: "Goose x5", value: "goose" },
+                    { name: "T-Rex x7", value: "trex" }
                 )
         )
         .addStringOption((option) =>
@@ -38,9 +38,9 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-        const knucklesEmojiId = ":man_in_manual_wheelchair:";
-        const shadowEmojiId = ":person_with_probing_cane:";
-        const eggmanEmojiId = ":man_running:";
+        const turtleEmojiId = ":turtle:";
+        const gooseEmojiId = ":goose:";
+        const trexEmojiId = ":t_rex:";
         const finishLineEmojiId = ":checkered_flag:";
         const winnerEmojiId = ":medal:";
         
@@ -79,19 +79,19 @@ module.exports = {
         var racerAmount;
         var winMultiplier;
         switch (raceType) {
-            case "knuckles":
+            case "turtle":
                 racerAmount = 3;
-                racerType = knucklesEmojiId;
+                racerType = turtleEmojiId;
                 winMultiplier = 2;
                 break;
-            case "shadow":
+            case "goose":
                 racerAmount = 5;
-                racerType = shadowEmojiId;
+                racerType = gooseEmojiId;
                 winMultiplier = 5;
                 break;
-            case "eggman":
+            case "trex":
                 racerAmount = 7;
-                racerType = eggmanEmojiId;
+                racerType = trexEmojiId;
                 winMultiplier = 10;
                 break;
             default:
@@ -102,7 +102,7 @@ module.exports = {
         var winningRacer = await startRace(bet, racerAmount, interaction, winnerEmojiId, finishLineEmojiId, racerType, userProfile, win);
 
         if (winningRacer === parseInt(prediction)) {
-            var gainedXP = 10 * winMultiplier;
+            var gainedXP = 10;
 
             await Profile.updateOne(
                 { UserID: interaction.user.id },

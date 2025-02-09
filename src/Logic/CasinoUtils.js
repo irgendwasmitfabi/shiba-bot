@@ -59,10 +59,10 @@ module.exports = {
         var emoji;
         switch (option) {
             case "darkchao":
-                emoji = '<:darkchao:1250176559109640224>'; //TODO: Add to config?
+                emoji = '<:darkchao:1338235258927059024>';
                 break;
             case "herochao":
-                emoji = '<:herochao:1250175743925682266>'; //TODO: Add to config?
+                emoji = '<:herochao:1338235266925723740>';
             default:
                 break;
         }

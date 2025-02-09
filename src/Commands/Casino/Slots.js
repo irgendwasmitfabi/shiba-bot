@@ -48,10 +48,10 @@ module.exports = {
 
         if (bet <= userProfile.Wallet) {
             const items = [
-                { name: "<:cherry:1199828030634348646>", mult: 0.1, weight: 40 },
-                { name: "<:blueFruit:1199828063425409115>", mult: 0, weight: 30 },
-                { name: "<:purpleFruit:1199828169742618675>", mult: 0.5, weight: 20 },
-                { name: "<:starFruit:1199828135047344138>", mult: 1, weight: 10 },
+                { name: "<:cherry:1338237224126255165>", mult: 0.1, weight: 40 },
+                { name: "<:blueFruit:1338237246872227851>", mult: 0, weight: 30 },
+                { name: "<:purpleFruit:1338237282477670443>", mult: 0.5, weight: 20 },
+                { name: "<:starFruit:1338237375234576384>", mult: 1, weight: 10 },
             ];
 
             var animatedSlotsEmbed = await getSlotsIdleEmbed(

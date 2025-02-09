@@ -3,8 +3,8 @@ const Profile = require("../../Models/Profile");
 const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { checkIfBetIsValid, getThreePieceRow } = require('../../Logic/CasinoUtils');
 const { ComponentType } = require('discord.js');
-const ApeWinPool = require('../../Data/Scratchcard/ApeWinPool.json');
-const DinoWinPool = require('../../Data/Scratchcard/DinoWinPool.json');
+const DarkChaoWinPool = require('../../Data/Scratchcard/DarkChaoWinPool.json');
+const HeroChaoWinPool = require('../../Data/Scratchcard/HeroChaoWinPool.json');
 
 const {
     getCustomColorAnswerEmbed,
@@ -38,11 +38,11 @@ module.exports = {
         switch (scratchCardOption) {
             case "darkchao":
                 bet = 300;
-                winPool = ApeWinPool.winnings;
+                winPool = DarkChaoWinPool.winnings;
                 break;
             case "herochao":
                 bet = 500;
-                winPool = DinoWinPool.winnings;
+                winPool = HeroChaoWinPool.winnings;
                 break;
             default:
                 break;

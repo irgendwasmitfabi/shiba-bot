@@ -3,6 +3,8 @@ const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 const Profile = require('../../Models/Profile');
 
+const formatter = new Intl.NumberFormat('us-US');
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('bank')
@@ -72,8 +74,8 @@ async function depositCoins(interaction, amount) {
 
     return await getDefaultNeutralAnswerEmbed(
         "Bank",
-        `Deposited ${amount} :coin: into your bank account.\n 
-        **Wallet:** ${userProfile.Wallet - amount} :coin:\n **Balance:** ${userProfile.Bank += amount} :coin:`
+        `Deposited ${formatter.format(amount)} :coin: into your bank account.\n 
+        **Wallet:** ${formatter.format(userProfile.Wallet - amount)} :coin:\n **Balance:** ${formatter.format(userProfile.Bank += amount)} :coin:`
     );
 }
 
@@ -99,7 +101,7 @@ async function withdrawCoins(interaction, amount) {
 
     return await getDefaultNeutralAnswerEmbed(
         "Bank",
-        `Withdrawn ${amount} :coin: from your bank account.\n 
-        **Wallet:** ${userProfile.Wallet += amount} :coin:\n **Balance:** ${userProfile.Bank - amount} :coin:`
+        `Withdrawn ${formatter.format(amount)} :coin: from your bank account.\n 
+        **Wallet:** ${formatter.format(userProfile.Wallet += amount)} :coin:\n **Balance:** ${formatter.format(userProfile.Bank - amount)} :coin:`
     );
 }

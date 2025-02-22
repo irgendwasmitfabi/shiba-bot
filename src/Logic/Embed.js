@@ -1,5 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 
+const formatter = new Intl.NumberFormat('us-US');
+
 module.exports = {
     getDefaultNeutralAnswerEmbed: async function getDefaultNeutralAnswerEmbed(title, description) {
         return new EmbedBuilder()
@@ -31,10 +33,10 @@ module.exports = {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - You Lost!")
             .setDescription(
-                `Your bet: ${bet}:coin:\n
+                `Your bet: ${formatter.format(bet)}:coin:\n
                 ${gameDescription}\n
-                Lost: ${lost}:coin:\n
-                Your Wallet: ${walletValue -= Number(lost)}:coin:`)
+                Lost: ${formatter.format(lost)}:coin:\n
+                Your Wallet: ${formatter.format(walletValue -= Number(lost))}:coin:`)
             .setColor("Red")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
@@ -42,10 +44,10 @@ module.exports = {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - You Won!")
             .setDescription(
-                `Your bet: ${bet}:coin:\n
+                `Your bet: ${formatter.format(bet)}:coin:\n
                 ${gameDescription}\n
-                Your Profit: ${profit}:coin:\n
-                Your Wallet: ${walletValue += Number(profit)}:coin:`)
+                Your Profit: ${formatter.format(profit)}:coin:\n
+                Your Wallet: ${formatter.format(walletValue += Number(profit))}:coin:`)
             .setColor("Green")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
@@ -53,9 +55,9 @@ module.exports = {
         return new EmbedBuilder()
             .setTitle(gameTitle + " - Draw!")
             .setDescription(
-                `Your bet: ${bet}:coin:\n
+                `Your bet: ${formatter.format(bet)}:coin:\n
                 ${gameDescription}\n
-                Your Wallet: ${walletValue}:coin:`)
+                Your Wallet: ${formatter.format(walletValue)}:coin:`)
             .setColor("Yellow")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },
@@ -63,7 +65,7 @@ module.exports = {
         return new EmbedBuilder()
             .setTitle("Slots")
             .setDescription(
-                `Your bet: ${bet}:coin:\n
+                `Your bet: ${formatter.format(bet)}:coin:\n
                 <a:slots1:1199827995729350777> <a:slots1:1199827995729350777> <a:slots1:1199827995729350777>\n`)
             .setColor("Gold")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
@@ -79,8 +81,8 @@ module.exports = {
             .setTitle(`${user.username}`)
             .setThumbnail(`${user.displayAvatarURL()}`)
             .setDescription(
-                `**Level**: ${profile.Level}\n **Current XP**: ${profile.CurrentXP} XP\n
-                **Wallet**: ${profile.Wallet} :coin:\n **Bank** ${profile.Bank} :coin:`)
+                `**Level**: ${profile.Level}\n **Current XP**: ${formatter.format(profile.CurrentXP)} XP\n
+                **Wallet**: ${formatter.format(profile.Wallet)} :coin:\n **Bank** ${formatter.format(profile.Bank)} :coin:`)
             .setColor("LuminousVividPink")
     },
     getUserLevelUpEmbed: async function getUserLevelUpEmbed(user, profile) {
@@ -88,8 +90,8 @@ module.exports = {
             .setTitle(`Level Up!`)
             .setDescription(
                 `${user.username} is now Level ${profile.Level}!\n
-                **Current XP**: ${profile.CurrentXP}XP of ${profile.XPForNextLevel}XP\n
-                You got ${profile.Level * 100}:coin:`)
+                **Current XP**: ${formatter.format(profile.CurrentXP)}XP of ${formatter.format(profile.XPForNextLevel)}XP\n
+                You got ${formatter.format(profile.Level * 100)}:coin:`)
             .setColor("LuminousVividPink")
             .setFooter({ text: `${user.username}`, iconURL: `${user.displayAvatarURL()}` });
     },

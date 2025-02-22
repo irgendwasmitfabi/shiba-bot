@@ -2,6 +2,8 @@ const { getDefaultNeutralAnswerEmbed } = require('../../Logic/Embed');
 const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 
+const formatter = new Intl.NumberFormat('us-US');
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('wallet')
@@ -17,7 +19,7 @@ module.exports = {
 
         var defaultNeutralAnswerEmbed = await getDefaultNeutralAnswerEmbed(
             "Wallet",
-            `**Wallet:** ${userProfile.Wallet} :coin:\n **Bank:** ${userProfile.Bank} :coin:`
+            `**Wallet:** ${formatter.format(userProfile.Wallet)} :coin:\n **Bank:** ${formatter.format(userProfile.Bank)} :coin:`
         );
 
         await interaction.reply({

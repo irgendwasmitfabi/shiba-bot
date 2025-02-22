@@ -3,6 +3,8 @@ const { checkForUserProfile, giveXPToUser, getUserProfile } = require('../../Log
 const { getCustomColorAnswerEmbed } = require("../../Logic/Embed");
 const { SlashCommandBuilder } = require("discord.js");
 
+const formatter = new Intl.NumberFormat('us-US');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("daily")
@@ -41,7 +43,7 @@ module.exports = {
 
       dailyRewardEmbed = await getCustomColorAnswerEmbed(
         "Daily Reward",
-        `You have collected today's reward ${calculatedDailyReward}:coin:`,
+        `You have collected today's reward ${formatter.format(calculatedDailyReward)}:coin:`,
         "Green",
         user
       );

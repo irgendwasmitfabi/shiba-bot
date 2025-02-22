@@ -140,7 +140,9 @@ async function startRace(bet, racerAmount, interaction, winnerEmojiId, finishLin
         embeds: [raceEmbed],
     });
 
-    while (raceIsWon == false) {
+    shuffleRacers(racers);
+
+    while (!raceIsWon) {
       for (var p = 0; p < racerAmount; p++) {
         if (racers[p].value == 0) {
           raceIsWon = true;
@@ -149,6 +151,7 @@ async function startRace(bet, racerAmount, interaction, winnerEmojiId, finishLin
           winningRacer = p + 1;
           break;
         }
+
         racers[p].value -= moveRacer();
       }
 
@@ -159,9 +162,9 @@ async function startRace(bet, racerAmount, interaction, winnerEmojiId, finishLin
     }
 
     return winningRacer;
-  }
+}
 
-  async function getRaceEmbed(bet, racers, raceTrackParts, racerType, interaction, winningRacer, userProfile, win) {
+async function getRaceEmbed(bet, racers, raceTrackParts, racerType, interaction, winningRacer, userProfile, win) {
     const title = "Race";
     const color = "Aqua";
 
@@ -205,15 +208,22 @@ async function startRace(bet, racerAmount, interaction, winnerEmojiId, finishLin
     }
 
     return raceDefaultEmbed;
-  }
+}
 
-  function moveRacer() {
+function moveRacer() {
     var move = Math.floor(Math.random() * 2);
     var minus;
-    if (move == 1) {
-      minus = 1;
+    if (move === 1) {
+        minus = 1;
     } else {
-      minus = 0;
+        minus = 0;
     }
     return minus;
-  }
+}
+
+function shuffleRacers(racers) {
+    for (var currentRacer = racers.length - 1; currentRacer > 0; currentRacer--) {
+        var racerToBeSwapped = Math.floor(Math.random() * (currentRacer + 1));
+        [racers[currentRacer], racers[racerToBeSwapped]] = [racers[racerToBeSwapped], racers[currentRacer]];
+    }
+}

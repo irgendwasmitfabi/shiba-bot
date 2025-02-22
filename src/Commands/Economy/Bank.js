@@ -1,5 +1,5 @@
 const { getDefaultNeutralAnswerEmbed, getDefaultNegativeAnswerEmbed } = require('../../Logic/Embed');
-const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 const Profile = require('../../Models/Profile');
 
@@ -26,21 +26,18 @@ module.exports = {
                 .setRequired(true)
         ),
 	async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
-
+        var userProfile = await checkForUserProfile(interaction);
+        
         var interactionReply;
 
         var amount = parseInt(interaction.options.getString("amount"));
         var bankAction = interaction.options.getString("action");
         switch (bankAction) {
             case "deposit":
-                interactionReply = await depositCoins(interaction, amount);
+                interactionReply = await depositCoins(interaction, amount, userProfile);
                 break;
             case "withdraw":
-                interactionReply = await withdrawCoins(interaction, amount);
+                interactionReply = await withdrawCoins(interaction, amount, userProfile);
             break;
             default:
                 break;
@@ -52,9 +49,7 @@ module.exports = {
 	},
 };
 
-async function depositCoins(interaction, amount) {
-    var userProfile = await getUserProfile(interaction);
-
+async function depositCoins(interaction, amount, userProfile) {
     if (userProfile.Wallet < amount) {
         return await getDefaultNegativeAnswerEmbed(
             "Bank",
@@ -79,9 +74,7 @@ async function depositCoins(interaction, amount) {
     );
 }
 
-async function withdrawCoins(interaction, amount) {
-    var userProfile = await getUserProfile(interaction);
-
+async function withdrawCoins(interaction, amount, userProfile) {
     if (userProfile.Bank < amount) {
         return await getDefaultNegativeAnswerEmbed(
             "Bank",

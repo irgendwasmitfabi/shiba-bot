@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
-const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { checkIfBetIsValid, getThreePieceRow } = require('../../Logic/CasinoUtils');
 const { ComponentType } = require('discord.js');
 const DarkChaoWinPool = require('../../Data/Scratchcard/DarkChaoWinPool.json');
@@ -26,10 +26,7 @@ module.exports = {
                 )
         ),
     async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
+        var userProfile = await checkForUserProfile(interaction);
 
         var scratchCardOption = interaction.options.getString("options");
 
@@ -50,8 +47,6 @@ module.exports = {
 
         var isBetValid = await checkIfBetIsValid(interaction, bet);
         if (!isBetValid) return;
-
-        var userProfile = await getUserProfile(interaction);
 
         var scratchCardEmbed = await getScratchCardEmbed(
             "ScratchCard: " + scratchCardOption,

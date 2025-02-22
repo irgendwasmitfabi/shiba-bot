@@ -1,5 +1,5 @@
 const { getDefaultNeutralAnswerEmbed } = require('../../Logic/Embed');
-const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 
 const formatter = new Intl.NumberFormat('us-US');
@@ -10,12 +10,7 @@ module.exports = {
 		.setDescription('Check your wallet')
         .addUserOption((option) => option.setName('target').setDescription('The user to see the Wallet from').setRequired(false)),
 	async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
-    
-        var userProfile = await getUserProfile(interaction);
+        var userProfile = await checkForUserProfile(interaction);
 
         var defaultNeutralAnswerEmbed = await getDefaultNeutralAnswerEmbed(
             `**Wallet** - ${userProfile.Username}`,

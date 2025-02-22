@@ -1,5 +1,5 @@
 const { getDefaultNeutralAnswerEmbed, getDefaultNegativeAnswerEmbed, getCustomColorAnswerEmbed } = require('../../Logic/Embed');
-const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile } = require('../../Logic/Utils');
 const { getTrophyById } = require('../../Logic/TrophyUtils');
 const { SlashCommandBuilder } = require('discord.js');
 const Trophy = require('../../Models/Trophy');
@@ -28,11 +28,8 @@ module.exports = {
                 .setDescription("The amount you want to buy")
         ),
 	async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
-    
+        var userProfile = await checkForUserProfile(interaction);
+        
         var formatter = new Intl.NumberFormat('us-US');
 
         var trophies = await getTrophies();
@@ -41,7 +38,7 @@ module.exports = {
         ).join('');
 
         if (parseInt(interaction.options.getString("trophy"))) {
-            var result = await buyTrophy(interaction);
+            var result = await buyTrophy(interaction, userProfile);
 
             if (result) {
                 return await interaction.reply({
@@ -68,7 +65,7 @@ async function getTrophies() {
   }
 }
 
-async function buyTrophy(interaction) {
+async function buyTrophy(interaction, userProfile) {
     var amount = parseInt(interaction.options.getString("amount")) || 1; 
 
     var boughtTrophyId = parseInt(interaction.options.getString("trophy"));
@@ -78,7 +75,6 @@ async function buyTrophy(interaction) {
 
     var price = amount * boughtTrophy.Value;
     
-    var userProfile = await getUserProfile(interaction);
     if (userProfile.Wallet < price) {
         return await getDefaultNegativeAnswerEmbed(
             "Trophy Shop",

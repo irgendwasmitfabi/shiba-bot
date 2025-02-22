@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
-const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { checkIfBetIsValid } = require('../../Logic/CasinoUtils');
 
 const {
@@ -33,15 +33,10 @@ module.exports = {
         var prediction = interaction.options.getString("prediction");
         var bet = interaction.options.getString("bet");
         
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
-
+        var userProfile = await checkForUserProfile(interaction);
+        
         var isBetValid = await checkIfBetIsValid(interaction, bet);
         if (!isBetValid) return;
-
-        var userProfile = await getUserProfile(interaction);
 
         if (bet === "a" && userProfile.Wallet > 0) {
             bet = userProfile.Wallet;

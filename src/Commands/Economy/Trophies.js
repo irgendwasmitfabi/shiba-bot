@@ -1,6 +1,6 @@
 const { getDefaultNegativeAnswerEmbed } = require('../../Logic/Embed');
 const { getTrophiesEmbed } = require('../../Logic/TrophyUtils');
-const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -9,12 +9,7 @@ module.exports = {
 		.setDescription('Check your item inventory')
         .addUserOption((option) => option.setName('target').setDescription('The user to check the item inventory from').setRequired(false)),
 	async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
-    
-        var userProfile = await getUserProfile(interaction);
+        var userProfile = await checkForUserProfile(interaction);
 
         if (userProfile.Trophies !== null && userProfile.Trophies.length > 0) {
             var trophyString = userProfile.Trophies.map(trophy => 

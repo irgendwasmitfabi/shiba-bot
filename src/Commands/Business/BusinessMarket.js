@@ -1,5 +1,5 @@
 const { getDefaultNeutralAnswerEmbed, getDefaultNegativeAnswerEmbed, getCustomColorAnswerEmbed } = require('../../Logic/Embed');
-const { checkForUserProfile, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile } = require('../../Logic/Utils');
 const { SlashCommandBuilder } = require('discord.js');
 const Business = require('../../Models/Business');
 const Profile = require('../../Models/Profile');
@@ -25,10 +25,7 @@ module.exports = {
 				)
         ),
 	async execute(interaction) {
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) {
-            return;
-        }
+        var userProfile = await checkForUserProfile(interaction);
     
         var businesses = await getBusinesses();
         var businessString = businesses.map(business => 
@@ -36,7 +33,7 @@ module.exports = {
         ).join('');
 
         if (parseInt(interaction.options.getString("business"))) {
-            var result = await buyBusiness(interaction);
+            var result = await buyBusiness(interaction, userProfile);
 
             if (result) {
                 return await interaction.reply({
@@ -63,14 +60,13 @@ async function getBusinesses() {
   }
 }
 
-async function buyBusiness(interaction) {
+async function buyBusiness(interaction, userProfile) {
     var boughtBusinessId = parseInt(interaction.options.getString("business"));
     var boughtBusiness = await getBusinessById(boughtBusinessId);
 
     if (!boughtBusiness) return null;
 
     var price = boughtBusiness.Price;
-    var userProfile = await getUserProfile(interaction);
     if (userProfile.Wallet < price) {
         return await getDefaultNegativeAnswerEmbed(
             "Business Market",

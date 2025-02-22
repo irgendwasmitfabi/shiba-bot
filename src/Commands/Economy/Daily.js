@@ -1,5 +1,5 @@
 const Profile = require("../../Models/Profile");
-const { checkForUserProfile, giveXPToUser, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { getCustomColorAnswerEmbed } = require("../../Logic/Embed");
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -22,12 +22,8 @@ module.exports = {
       user
     );
     
-    var userExists = await checkForUserProfile(interaction);
-    if (!userExists) {
-        return;
-    }
+    var userProfile = await checkForUserProfile(interaction);
 
-    var userProfile = await getUserProfile(interaction);
     var calculatedDailyReward = dailyReward * userProfile.Level;
 
     if (userProfile.LastDaily === "undefined" || Date.now() - userProfile.LastDaily > millisecondsInADay) {

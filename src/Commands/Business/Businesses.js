@@ -1,5 +1,5 @@
 const Profile = require("../../Models/Profile");
-const { checkForUserProfile, giveXPToUser, getUserProfile } = require('../../Logic/Utils');
+const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { getCustomColorAnswerEmbed, getDefaultNegativeAnswerEmbed } = require("../../Logic/Embed");
 const { SlashCommandBuilder } = require("discord.js");
 const { getBusinessById } = require('../../Logic/BusinessUtils');
@@ -36,14 +36,10 @@ module.exports = {
             )
     ),
   async execute(interaction) {
-    var userExists = await checkForUserProfile(interaction);
-    if (!userExists) {
-        return;
-    }
+    var userProfile = await checkForUserProfile(interaction);
 
     var businessId = parseInt(interaction.options.getString("business"));
 
-    var userProfile = await getUserProfile(interaction);
     var userBusiness = userProfile.Businesses.find(p => p.BusinessId === businessId);
 
     if (!userBusiness) {

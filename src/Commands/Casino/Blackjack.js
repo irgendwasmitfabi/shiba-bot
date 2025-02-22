@@ -2,7 +2,7 @@ const { ButtonBuilder, ButtonStyle } = require('discord.js');
 const { ComponentType } = require('discord.js');
 const { SlashCommandBuilder, ActionRowBuilder } = require("discord.js");
 const Profile = require("../../Models/Profile");
-const { checkForUserProfile, getUserProfile, giveXPToUser } = require('../../Logic/Utils');
+const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { checkIfBetIsValid } = require('../../Logic/CasinoUtils');
 
 const fs = require('fs');
@@ -39,11 +39,8 @@ module.exports = {
     async execute(interaction) {
         var bet = interaction.options.getString("bet");
 
-        var userExists = await checkForUserProfile(interaction);
-        if (!userExists) return;
-
-        var userProfile = await getUserProfile(interaction);
-
+        var userProfile = await checkForUserProfile(interaction);
+        
         var isBetValid = await checkIfBetIsValid(interaction, bet, null, userProfile);
         if (!isBetValid) return;
 

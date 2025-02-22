@@ -4,29 +4,17 @@ const { getDefaultNeutralAnswerEmbed } = require('./Embed');
 module.exports = {
   createProfile: async function createProfile(interaction) {
     var user = interaction.user;
-    var profile = await Profile.find({ UserID: user.id });
 
-    if (!profile.length) {
-      await new Profile({
-        Bank: 0,
-        CurrentXP: 0,
-        LastDaily: new Date().setDate(new Date().getDate() - 25),
-        Level: 1,
-        UserID: user.id,
-        Username: user.username,
-        Wallet: 0,
-        XPForNextLevel: 250,
-      }).save();
-
-      var profileNotFoundEmbed = await getDefaultNeutralAnswerEmbed(
-        "Profile not found",
-        `Creating new profile...`
-      );
-
-      await interaction.reply({
-          embeds: [profileNotFoundEmbed]
-      });
-    }
+    return await new Profile({
+      Bank: 0,
+      CurrentXP: 0,
+      LastDaily: new Date().setDate(new Date().getDate() - 25),
+      Level: 1,
+      UserID: user.id,
+      Username: user.username,
+      Wallet: 0,
+      XPForNextLevel: 250,
+    }).save();
   },
   checkIfLevelUp: async function checkIfLevelUp(user) {
     var profile = await Profile.find({ UserID: user.id });
@@ -76,7 +64,7 @@ module.exports = {
 
       var userProfile = await Profile.findOne({ UserID: user.id });
       if (userProfile) {
-        return true;
+        return userProfile;
       }
 
       if (user !== interaction.user) {
@@ -85,20 +73,10 @@ module.exports = {
           ephemeral: true,
         });
 
-        return false;
+        return;
       }
 
-      await module.exports.createProfile(interaction);
-      return false;
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  getUserProfile: async function getUserProfile(interaction) {
-    try {
-      var user = interaction.options.getUser('target') || interaction.user;
-
-      return await Profile.findOne({UserID: user.id});
+      return await module.exports.createProfile(interaction);
     } catch (error) {
       console.log(error);
     }

@@ -7,6 +7,7 @@
 - 💵 Economy
 - 🔢 Level System
 - 🎰 Gambling
+- 🏦 Businesses
 - 🎮 Show Minecraft Recipes
 - 🐶 Tamagotchi (Coming soon..)
 - 🧭 RPG (Coming soon..)

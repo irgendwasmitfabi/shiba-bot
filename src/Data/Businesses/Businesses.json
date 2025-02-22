@@ -1,0 +1,110 @@
+[
+    {
+        "Id": 1,
+        "Name": "Kiosk",
+        "EmojiId": ":convenience_store:",
+        "Price": 100000,
+        "Levels": [
+            { "Level": 1, "Profit": 5000, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 7500, "UpgradePrice": 20000, "IsMax": false },
+            { "Level": 3, "Profit": 10000, "UpgradePrice": 40000, "IsMax": false },
+            { "Level": 4, "Profit": 13000, "UpgradePrice": 60000, "IsMax": false },
+            { "Level": 5, "Profit": 17000, "UpgradePrice": 80000, "IsMax": false },
+            { "Level": 6, "Profit": 22000, "UpgradePrice": 100000, "IsMax": false },
+            { "Level": 7, "Profit": 28000, "UpgradePrice": 130000, "IsMax": false },
+            { "Level": 8, "Profit": 35000, "UpgradePrice": 160000, "IsMax": false },
+            { "Level": 9, "Profit": 45000, "UpgradePrice": 200000, "IsMax": false },
+            { "Level": 10, "Profit": 60000, "UpgradePrice": 250000, "IsMax": true }
+        ]
+    },
+    {
+        "Id": 2,
+        "Name": "Pawn Shop",
+        "EmojiId": ":classical_building:",
+        "Price": 250000,
+        "Levels": [
+            { "Level": 1, "Profit": 12500, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 18000, "UpgradePrice": 50000, "IsMax": false },
+            { "Level": 3, "Profit": 25000, "UpgradePrice": 100000, "IsMax": false },
+            { "Level": 4, "Profit": 32000, "UpgradePrice": 150000, "IsMax": false },
+            { "Level": 5, "Profit": 40000, "UpgradePrice": 200000, "IsMax": false },
+            { "Level": 6, "Profit": 50000, "UpgradePrice": 250000, "IsMax": false },
+            { "Level": 7, "Profit": 62000, "UpgradePrice": 320000, "IsMax": false },
+            { "Level": 8, "Profit": 75000, "UpgradePrice": 400000, "IsMax": false },
+            { "Level": 9, "Profit": 90000, "UpgradePrice": 500000, "IsMax": false },
+            { "Level": 10, "Profit": 120000, "UpgradePrice": 650000, "IsMax": true }
+        ]
+    },
+    {
+        "Id": 3,
+        "Name": "Gym",
+        "EmojiId": ":man_lifting_weights:",
+        "Price": 750000,
+        "Levels": [
+            { "Level": 1, "Profit": 40000, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 55000, "UpgradePrice": 150000, "IsMax": false },
+            { "Level": 3, "Profit": 75000, "UpgradePrice": 250000, "IsMax": false },
+            { "Level": 4, "Profit": 95000, "UpgradePrice": 350000, "IsMax": false },
+            { "Level": 5, "Profit": 120000, "UpgradePrice": 450000, "IsMax": false },
+            { "Level": 6, "Profit": 150000, "UpgradePrice": 600000, "IsMax": false },
+            { "Level": 7, "Profit": 180000, "UpgradePrice": 750000, "IsMax": false },
+            { "Level": 8, "Profit": 220000, "UpgradePrice": 900000, "IsMax": false },
+            { "Level": 9, "Profit": 270000, "UpgradePrice": 1100000, "IsMax": false },
+            { "Level": 10, "Profit": 350000, "UpgradePrice": 1400000, "IsMax": true }
+        ]
+    },
+    {
+        "Id": 4,
+        "Name": "Car Wash",
+        "EmojiId": ":soap:",
+        "Price": 2000000,
+        "Levels": [
+            { "Level": 1, "Profit": 100000, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 130000, "UpgradePrice": 400000, "IsMax": false },
+            { "Level": 3, "Profit": 180000, "UpgradePrice": 700000, "IsMax": false },
+            { "Level": 4, "Profit": 230000, "UpgradePrice": 1000000, "IsMax": false },
+            { "Level": 5, "Profit": 290000, "UpgradePrice": 1300000, "IsMax": false },
+            { "Level": 6, "Profit": 360000, "UpgradePrice": 1700000, "IsMax": false },
+            { "Level": 7, "Profit": 450000, "UpgradePrice": 2100000, "IsMax": false },
+            { "Level": 8, "Profit": 550000, "UpgradePrice": 2600000, "IsMax": false },
+            { "Level": 9, "Profit": 700000, "UpgradePrice": 3200000, "IsMax": false },
+            { "Level": 10, "Profit": 900000, "UpgradePrice": 4000000, "IsMax": true }
+        ]
+    },
+    {
+        "Id": 5,
+        "Name": "Nightclub",
+        "EmojiId": ":headphones:",
+        "Price": 5000000,
+        "Levels": [
+            { "Level": 1, "Profit": 250000, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 350000, "UpgradePrice": 1000000, "IsMax": false },
+            { "Level": 3, "Profit": 500000, "UpgradePrice": 2000000, "IsMax": false },
+            { "Level": 4, "Profit": 650000, "UpgradePrice": 3000000, "IsMax": false },
+            { "Level": 5, "Profit": 850000, "UpgradePrice": 4000000, "IsMax": false },
+            { "Level": 6, "Profit": 1100000, "UpgradePrice": 5500000, "IsMax": false },
+            { "Level": 7, "Profit": 1400000, "UpgradePrice": 7000000, "IsMax": false },
+            { "Level": 8, "Profit": 1800000, "UpgradePrice": 9000000, "IsMax": false },
+            { "Level": 9, "Profit": 2300000, "UpgradePrice": 12000000, "IsMax": false },
+            { "Level": 10, "Profit": 3000000, "UpgradePrice": 15000000, "IsMax": true }
+        ]
+    },
+    {
+        "Id": 6,
+        "Name": "Casino",
+        "EmojiId": ":slot_machine:",
+        "Price": 15000000,
+        "Levels": [
+            { "Level": 1, "Profit": 750000, "UpgradePrice": null, "IsMax": false },
+            { "Level": 2, "Profit": 1000000, "UpgradePrice": 3000000, "IsMax": false },
+            { "Level": 3, "Profit": 1400000, "UpgradePrice": 5000000, "IsMax": false },
+            { "Level": 4, "Profit": 1800000, "UpgradePrice": 7000000, "IsMax": false },
+            { "Level": 5, "Profit": 2300000, "UpgradePrice": 9000000, "IsMax": false },
+            { "Level": 6, "Profit": 3000000, "UpgradePrice": 12000000, "IsMax": false },
+            { "Level": 7, "Profit": 3800000, "UpgradePrice": 15000000, "IsMax": false },
+            { "Level": 8, "Profit": 4800000, "UpgradePrice": 19000000, "IsMax": false },
+            { "Level": 9, "Profit": 6000000, "UpgradePrice": 24000000, "IsMax": false },
+            { "Level": 10, "Profit": 8000000, "UpgradePrice": 30000000, "IsMax": true }
+        ]
+    }
+]

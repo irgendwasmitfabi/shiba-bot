@@ -16,6 +16,15 @@ module.exports = model(
       Name: String,
       EmojiId: String,
       Amount: Number
+    }],
+    Businesses: [{ 
+      BusinessId: Number,
+      Name: String,
+      EmojiId: String,
+      CurrentProfit: Number,
+      Level: Number,
+      LastCollected: Date,
+      IsMax: Boolean
     }]
   })
 );

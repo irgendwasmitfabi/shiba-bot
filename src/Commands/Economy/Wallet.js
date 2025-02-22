@@ -18,7 +18,7 @@ module.exports = {
         var userProfile = await getUserProfile(interaction);
 
         var defaultNeutralAnswerEmbed = await getDefaultNeutralAnswerEmbed(
-            "Wallet",
+            `**Wallet** - ${userProfile.Username}`,
             `**Wallet:** ${formatter.format(userProfile.Wallet)} :coin:\n **Bank:** ${formatter.format(userProfile.Bank)} :coin:`
         );
 

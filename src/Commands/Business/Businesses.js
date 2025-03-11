@@ -75,10 +75,8 @@ module.exports = {
 
 async function collectDailyProfit(interaction, userBusiness, userProfile) {
   var millisecondsInADay = 86400000;
-  var lastCollected = userBusiness.LastCollected || 0;
-  var timeSinceLastCollected = Date.now() - lastCollected;
-
-  if (timeSinceLastCollected > millisecondsInADay) {
+  var lastCollected = new Date(userBusiness.LastCollected);
+  if (Date.now() - lastCollected > millisecondsInADay) {
       userBusiness.LastCollected = Date.now();
       await userProfile.save();
 
@@ -96,7 +94,7 @@ async function collectDailyProfit(interaction, userBusiness, userProfile) {
 
       await giveXPToUser(interaction.user, 5);
   } else {
-      var timeLeftTillNextDaily = Math.max(0, Math.round((lastCollected + millisecondsInADay - Date.now()) / 1000));
+      var timeLeftTillNextDaily = Math.max(0, Math.round((lastCollected.getTime() + millisecondsInADay - Date.now()) / 1000));
       var timeLeftInHours = Math.floor(timeLeftTillNextDaily / 3600);
       var timeLeftInMinutes = Math.floor((timeLeftTillNextDaily % 3600) / 60);
       var timeLeftInSeconds = timeLeftTillNextDaily % 60;

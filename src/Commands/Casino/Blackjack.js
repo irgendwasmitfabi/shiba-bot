@@ -6,7 +6,7 @@ const { checkForUserProfile, giveXPToUser } = require('../../Logic/Utils');
 const { checkIfBetIsValid } = require('../../Logic/CasinoUtils');
 
 const fs = require('fs');
-const data = fs.readFileSync('./Data/Blackjack/Blackjack.json', 'utf8');
+const data = fs.readFileSync('./src/Data/Blackjack/Blackjack.json', 'utf8');
 const deck = JSON.parse(data);
 
 const { 

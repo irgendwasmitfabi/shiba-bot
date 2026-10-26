@@ -27,10 +27,15 @@ module.exports = {
 	async execute(interaction) {
         var userProfile = await checkForUserProfile(interaction);
     
-        var businesses = await getBusinesses();
-        var businessString = businesses.map(business => 
+        var businesses = await getBusinesses() || [];
+
+        var businessString = businesses.map(business =>
             `${business.EmojiId} **${business.Name}** ${formatter.format(business.Price)}:coin:\n\n`
         ).join('');
+
+        if (!businessString) {
+            businessString = "No businesses are currently available.";
+        }
 
         if (parseInt(interaction.options.getString("business"))) {
             var result = await buyBusiness(interaction, userProfile);

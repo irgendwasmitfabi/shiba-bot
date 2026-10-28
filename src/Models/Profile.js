@@ -6,6 +6,7 @@ module.exports = model(
     Bank: Number,
     CurrentXP: Number,
     LastDaily: Date,
+    LastWork: Date,
     Level: Number,
     UserID: String,
     Username: String,

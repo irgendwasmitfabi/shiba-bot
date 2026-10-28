@@ -66,14 +66,15 @@ async function getTrophies() {
 }
 
 async function buyTrophy(interaction, userProfile) {
-    var amount = parseInt(interaction.options.getString("amount")) || 1; 
+    var amount = interaction.options.getString("amount") ?? 1;
+    var amountNumber = parseInt(amount); 
 
     var boughtTrophyId = parseInt(interaction.options.getString("trophy"));
     var boughtTrophy = await getTrophyById(boughtTrophyId);
 
     if (!boughtTrophy) return null;
 
-    var price = amount * boughtTrophy.Value;
+    var price = amountNumber * boughtTrophy.Value;
     
     if (userProfile.Wallet < price) {
         return await getDefaultNegativeAnswerEmbed(
@@ -90,13 +91,13 @@ async function buyTrophy(interaction, userProfile) {
 
     const existingTrophy = userProfile.Trophies.find(p => p.TrophyId === boughtTrophy.Id);
     if (existingTrophy) {
-        existingTrophy.Amount += amount;
+        existingTrophy.Amount += amountNumber;
     } else {
         userProfile.Trophies.push({
           TrophyId: boughtTrophy.Id,
           Name: boughtTrophy.Name,
           EmojiId: boughtTrophy.EmojiId,
-          Amount: 1,
+          Amount: amountNumber,
         });
     }
     await userProfile.save();

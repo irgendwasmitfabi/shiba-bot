@@ -26,7 +26,7 @@ module.exports = {
 
     var calculatedDailyReward = dailyReward * userProfile.Level;
 
-    if (userProfile.LastDaily === "undefined" || Date.now() - userProfile.LastDaily > millisecondsInADay) {
+    if (!userProfile.LastDaily || Date.now() - userProfile.LastDaily > millisecondsInADay) {
       await Profile.updateOne(
         { UserID: user.id },
         { $set: { LastDaily: Date.now() } }
